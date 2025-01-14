@@ -1,4 +1,5 @@
 export const initFAPI = (appId, appKey, onSuccess, onError) => {
+
     if (!window.FAPI) {
         console.error("FAPI SDK не загружен");
         return;
@@ -7,7 +8,7 @@ export const initFAPI = (appId, appKey, onSuccess, onError) => {
     window.FAPI.init(
         {
             api_server: "https://api.ok.ru/",
-            widget_server: "https://connect.ok.ru/",
+            api_connection: "https://connect.ok.ru/",
             app_id: appId,
             app_key: appKey,
         },

@@ -18,6 +18,7 @@ const App = () => {
             const params = window.FAPI.Util.getRequestParameters();
             setRole(params.viewer_type);
             setGroupId(params.group_id);
+
         }, (error) => {
             console.error("Ошибка инициализации FAPI:", error);
         });
