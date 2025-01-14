@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { initSdk, callApi } from "./utils/okSdk";
+import { initFAPI, callApi } from "./utils/okSdk";
 import AdminPage from "./pages/AdminPage";
 import UserPage from "./pages/UserPage";
 
@@ -8,22 +8,23 @@ const App = () => {
     const [groupId, setGroupId] = useState(null);
 
     useEffect(() => {
-        const initializeApp = async () => {
-            try {
-                await initSdk();
-                const groupData = await callApi("group.getCurrent");
-                setRole(groupData.role);
-                setGroupId(groupData.groupId);
-            } catch (error) {
-                console.error("Ошибка инициализации приложения:", error);
-            }
-        };
+        const appId = "512002738663";
+        const appKey = "56A2AC5DC735A6B5D99602A7";
 
-        initializeApp();
+        initFAPI(appId, appKey, () => {
+            console.log("FAPI инициализирован");
+
+            // Определяем параметры запуска
+            const params = window.FAPI.Util.getRequestParameters();
+            setRole(params.viewer_type);
+            setGroupId(params.group_id);
+        }, (error) => {
+            console.error("Ошибка инициализации FAPI:", error);
+        });
     }, []);
 
     if (!role || !groupId) {
-        return <div className="min-h-screen flex items-center justify-center">Загрузка...</div>;
+        return <div>Загрузка...</div>;
     }
 
     return role === "ADMIN" ? (

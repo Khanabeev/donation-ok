@@ -6,30 +6,25 @@ const AdminPage = ({ groupId }) => {
 
     const handleSaveToken = async () => {
         try {
-            await callApi("group.saveToken", { groupId, token });
+            const result = await callApi("group.saveToken", { group_id: groupId, token });
+            console.log("Токен сохранен:", result);
             alert("Токен успешно сохранен!");
         } catch (error) {
             console.error("Ошибка сохранения токена:", error);
-            alert("Не удалось сохранить токен.");
+            alert("Ошибка сохранения токена");
         }
     };
 
     return (
-        <div className="p-6 bg-white shadow-md rounded">
-            <h1 className="text-2xl font-bold mb-4">Настройки группы</h1>
+        <div>
+            <h1>Настройки группы</h1>
             <input
                 type="text"
-                className="w-full p-2 border rounded mb-4"
-                placeholder="Введите токен"
                 value={token}
                 onChange={(e) => setToken(e.target.value)}
+                placeholder="Введите токен"
             />
-            <button
-                className="px-4 py-2 bg-blue-500 text-white rounded"
-                onClick={handleSaveToken}
-            >
-                Сохранить
-            </button>
+            <button onClick={handleSaveToken}>Сохранить</button>
         </div>
     );
 };

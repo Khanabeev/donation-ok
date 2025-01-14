@@ -1,43 +1,30 @@
-import OKSDK from "ok-js-sdk";
+export const initFAPI = (appId, appKey, onSuccess, onError) => {
+    if (!window.FAPI) {
+        console.error("FAPI SDK не загружен");
+        return;
+    }
 
-const OK_APP_ID = process.env.REACT_APP_OK_APP_ID;
-const OK_APP_KEY = process.env.REACT_APP_OK_SECRET_KEY;
+    window.FAPI.init(
+        {
+            api_server: "https://api.ok.ru/",
+            widget_server: "https://connect.ok.ru/",
+            app_id: appId,
+            app_key: appKey,
+        },
+        onSuccess,
+        onError
+    );
+};
 
-/**
- * Инициализация OK SDK
- */
-export const initSdk = async () => {
+export const callApi = (method, params) => {
     return new Promise((resolve, reject) => {
-        OKSDK.init(
-            {
-                app_id: OK_APP_ID,
-                app_key: OK_APP_KEY,
-                oauth: {
-                    scope: "VALUABLE_ACCESS",
-                    url: process.env.REACT_APP_OK_REDIRECT_URI,
-                },
-            },
-            () => resolve(OKSDK),
-            (error) => reject(error)
+        window.FAPI.Client.call(
+            method,
+            params,
+            (status, data, error) => {
+                if (status === "ok") resolve(data);
+                else reject(error);
+            }
         );
     });
-};
-
-/**
- * Вызов REST API
- */
-export const callApi = async (method, params = {}) => {
-    return new Promise((resolve, reject) => {
-        OKSDK.REST.call(method, params, (status, data, error) => {
-            if (status === "ok") resolve(data);
-            else reject(error);
-        });
-    });
-};
-
-/**
- * Открытие платежа
- */
-export const showPayment = (productName, productPrice, productCode) => {
-    OKSDK.Payment.show(productName, productPrice, productCode);
 };
