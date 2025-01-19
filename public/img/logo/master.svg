@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="427.86" height="263.92" viewBox="0 0 427.86 263.92">
+    <defs>
+        <style>.cls-1 {
+            fill: #ee0005;
+        }
+
+        .cls-2 {
+            fill: #f69e1e;
+        }
+
+        .cls-3 {
+            fill: #f26122;
+        }</style>
+    </defs>
+    <title>master</title>
+    <g id="Слой_2" data-name="Слой 2">
+        <g id="Capa_1" data-name="Capa 1">
+            <circle class="cls-1" cx="131.96" cy="131.96" r="131.96"/>
+            <circle class="cls-2" cx="295.9" cy="131.96" r="131.96"/>
+            <path class="cls-3"
+                  d="M164,132a131.73,131.73,0,0,0,50,103.41,132,132,0,0,0,0-206.82A131.73,131.73,0,0,0,164,132Z"/>
+        </g>
+    </g>
+</svg>

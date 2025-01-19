@@ -1,37 +1,51 @@
-import React, { useEffect, useState } from "react";
-import { initFAPI, callApi } from "./utils/okSdk";
-import AdminPage from "./pages/AdminPage";
-import UserPage from "./pages/UserPage";
+import React, {useEffect, useState} from "react";
+import {initFAPI} from "./core/okSdk";
+import {Route, Routes} from "react-router";
+import Donation from "./pages/Donation/Donation.jsx";
+import Welcome from "./pages/Welcome/Welcome.jsx";
+import Settings from "./pages/Settings/Settings.jsx";
+import ProtectedRoute from "@/middleware/ProtectedRoute.jsx";
 
 const App = () => {
-    const [role, setRole] = useState(null);
+    const [isAdminOfGroup, setIsAdminOfGroup] = useState(false);
     const [groupId, setGroupId] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
+
+    const onSuccess = () => {
+        console.log("FAPI инициализирован");
+        const params = new URLSearchParams(window.location.search);
+        setIsAdminOfGroup(params.get("viewer_type") === "ADMIN");
+        setGroupId(params.get("group_id"));
+        console.log(params.get("group_id"))
+
+        setIsLoading(false);
+    };
+
+    const onError = (error) => {
+        console.error("Ошибка инициализации FAPI:", error);
+        setIsLoading(false);
+    };
 
     useEffect(() => {
-        const appId = "512002738663";
-        const appKey = "56A2AC5DC735A6B5D99602A7";
-
-        initFAPI(appId, appKey, () => {
-            console.log("FAPI инициализирован");
-
-            // Определяем параметры запуска
-            const params = window.FAPI.Util.getRequestParameters();
-            setRole(params.viewer_type);
-            setGroupId(params.group_id);
-
-        }, (error) => {
-            console.error("Ошибка инициализации FAPI:", error);
-        });
+        setIsLoading(true);
+        initFAPI(onSuccess, onError);
     }, []);
 
-    if (!role || !groupId) {
-        return <div>Загрузка...</div>;
+    if (isLoading) {
+        return <div style={{padding: "1rem"}}>Загрузка...</div>;
     }
 
-    return role === "ADMIN" ? (
-        <AdminPage groupId={groupId} />
-    ) : (
-        <UserPage groupId={groupId} />
+    return (
+        <Routes>
+            {/* Доступ только администраторам */}
+            <Route element={<ProtectedRoute isAdminOfGroup={isAdminOfGroup} adminOnly/>}>
+                <Route index path="/" element={<Welcome />} />
+                <Route path="/settings" element={<Settings groupId={groupId}/>}/>
+            </Route>
+
+            {/* Доступ для всех */}
+            <Route path="/donate" element={<Donation/>}/>
+        </Routes>
     );
 };
 

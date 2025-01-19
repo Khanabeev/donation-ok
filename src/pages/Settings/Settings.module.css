@@ -1,0 +1,49 @@
+.title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 14px;
+}
+
+.desc {
+    font-size: 14px;
+    font-weight: normal;
+    color: #6B6D6B;
+}
+
+.form {
+
+}
+
+.textarea {
+    width: 100%;
+}
+
+.input {
+    background-color: transparent;
+    width: 100%;
+    height: 120px;
+    border: 1px solid #8D8D8D;
+    border-radius: 8px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-size: 18px;
+    color: rgba(0, 0, 0, .8);
+    outline: none;
+    padding: 0 10px;
+}
+
+.input::placeholder {
+    color: #7A7A7A;
+    font-size: 24px;
+}
+
+
+.help {
+    font-size: 14px;
+}
+
+.link {
+    font-size: inherit;
+    color: rgb(0, 102, 153);
+    text-decoration: none;
+}
