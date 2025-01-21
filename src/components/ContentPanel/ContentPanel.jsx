@@ -1,4 +1,3 @@
-import React from 'react';
 import PropTypes from 'prop-types';
 import cn from "classnames";
 
@@ -9,7 +8,7 @@ const ContentPanel = ({children, hasBackground = true}) => {
     })
 
     return (
-        <div className="flex place-content-center relative">
+        <div className="flex place-content-center relative bg-white h-[calc(100vh-200px)]">
             <div className={classes }>
                 {children}
             </div>

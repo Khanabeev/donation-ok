@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {callApi} from "@/core/okSdk.js";
 import HeaderPanel from "@/components/HeaderPanel/HeaderPanel.jsx";
 import {BiDonateHeart} from "react-icons/bi";
@@ -10,16 +10,27 @@ import PaymentMethodSelector from "@/components/PaymentMethodSelector/PaymentMet
 import {FiCheckSquare, FiSquare} from "react-icons/fi";
 import Popover from "@/components/Popover/Popover.jsx";
 import {GoQuestion} from "react-icons/go";
+import cn from "classnames";
 
 const Donation = ({groupId}) => {
     const [groupName, setGroupName] = useState("");
-    const [amounts, setAmounts] = useState([300, 500, 1000, 2000, 3000, 4000]);
+
+    const [amounts, setAmounts] = useState([300, 500, 600, 700, 800, 1000]);
     const [selectedAmount, setSelectedAmount] = useState(0);
-    const [minAmount, setMinAmount] = useState(0);
+    const [minAmount, setMinAmount] = useState(10);
+    const [amountError, setAmountError] = useState(null);
+
     const [isRecurrentPayment, setIsRecurrentPayment] = useState(true);
+
     const [email, setEmail] = useState("");
+    const [isEmailRequired, setIsEmailRequired] = useState(true);
+    const [emailError, setEmailError] = useState(null);
+
+
+    const [isButtonDisabled, setIsButtonDisabled] = useState(true);
+
     const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("");
-    const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+    const [paymentMethodError, setPaymentMethodError] = useState(null);
     const [paymentMethods, setPaymentMethods] = useState([
         {
             payTypes: ["visa", "master", "mir"],
@@ -46,7 +57,64 @@ const Donation = ({groupId}) => {
         alert(`Вы пожертвовали ${amount} рублей!`);
     };
 
-    console.log(selectedAmount, selectedPaymentMethod);
+    const isValidEmail = (email) => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    };
+
+    const isValidAmount = () => {
+        return selectedAmount >= minAmount;
+    };
+
+    const isDonationDataValid = () => {
+        console.log(paymentMethodError,
+            amountError,
+            emailError)
+        return (!paymentMethodError && !amountError && !emailError)
+    }
+
+    // Проверка минимальной суммы
+    useEffect(() => {
+        setAmountError(null);
+        if (!isValidAmount()) {
+            setAmountError("Введите сумму от " + minAmount + "₽");
+        }
+    }, [selectedAmount]);
+
+    // Проверка почты
+    useEffect(() => {
+        setEmailError(null)
+        if (email === "" && isEmailRequired) {
+            setEmailError("Не указан email")
+        }
+
+        if (email !== "" && !isValidEmail(email)) {
+            setEmailError("Некорректный email");
+        }
+    }, [email]);
+
+    // Проверка, что выбран метод оплаты
+    useEffect(() => {
+        setPaymentMethodError(null)
+        if (selectedPaymentMethod === "") {
+            setPaymentMethodError("Укажите способ оплаты")
+        }
+    }, [selectedPaymentMethod]);
+
+    // Установка изначальной суммы
+    useEffect(() => {
+        setSelectedAmount(amounts[0]);
+    }, [amounts]);
+
+    // Активация кнопки
+    useEffect(() => {
+        setIsButtonDisabled(false);
+        console.log(isDonationDataValid())
+        if (!isDonationDataValid()) {
+            setIsButtonDisabled(true);
+        }
+    }, [paymentMethodError, amountError, emailError]);
+
 
     const gid = '70000033151402';
     callApi('group.getInfo', {uids: [gid], fields: ['name']})
@@ -70,8 +138,24 @@ const Donation = ({groupId}) => {
             <ContentPanel>
                 <div className="flex flex-col gap-4">
                     <p className="text-lg text-base-300">Сумма пожертвования</p>
-                    <AmountSelector amounts={amounts} onChange={setSelectedAmount}/>
-                    <Input type="email" className="input w-full h-14 text-center" placeholder="Ваш email"/>
+                    <div>
+                        <AmountSelector amounts={amounts}
+                                        onChange={setSelectedAmount}
+                                        amountError={amountError}/>
+
+                    </div>
+
+                    <div className="relative">
+                        <Input type="email"
+                               className={cn("input w-full h-14 text-center", {
+                                   "border-error": emailError,
+                               })}
+                               onChange={(e) => setEmail(e.target.value)}
+                               placeholder="Ваш email"
+                        />
+                        {emailError && (
+                            <div className="text-sm text-white bg-error absolute top-[-10px] px-1">{emailError}</div>)}
+                    </div>
 
                     <PaymentMethodSelector methods={paymentMethods} onChange={setSelectedPaymentMethod}/>
                     <div>
@@ -94,7 +178,15 @@ const Donation = ({groupId}) => {
                             Если вы можете помогать нам регулярно, мы сможем сделать еще больше.</p>
                     </div>
 
-                    <Button className="rounded-lg" size="xl" variant="secondary" disabled={isButtonDisabled}>Помочь</Button>
+                    <Button
+                        className="rounded-lg"
+                        size="xl"
+                        variant="secondary"
+                        disabled={isButtonDisabled}
+                        onClick={handleDonate}
+                    >
+                        Помочь
+                    </Button>
                 </div>
 
             </ContentPanel>

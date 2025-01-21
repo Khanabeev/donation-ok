@@ -3,7 +3,7 @@ import cn from "classnames";
 import PropTypes from "prop-types";
 import Input from "@/components/Input/Input.jsx";
 
-const AmountSelector = ({amounts, onChange}) => {
+const AmountSelector = ({amounts, onChange, amountError, className}) => {
     const [selectedIndex, setSelectedIndex] = useState(0);
     const [customAmount, setCustomAmount] = useState("");
 
@@ -23,7 +23,7 @@ const AmountSelector = ({amounts, onChange}) => {
     return (
         <div className="flex flex-wrap gap-[0.8em] w-full">
             {amounts.map((amount, index) => (
-                <div key={index} className="flex-1 basis-auto">
+                <div key={index} className="flex-1 basis-[calc(33.333%-0.8em)]">
                     <input
                         id={`amount-${index}`}
                         className="hidden"
@@ -45,16 +45,23 @@ const AmountSelector = ({amounts, onChange}) => {
                     </label>
                 </div>
             ))}
+                <div className="relative flex-1 basis-full">
+                    <Input
+                        type="number"
+                        name="custom_sum"
+                        min="0"
+                        step="10"
+                        placeholder="Другая сумма"
+                        value={customAmount}
+                        onChange={handleCustomAmount}
+                        className={cn("text-center px-6 py-4 w-full", className,
+                            {
+                                "border-error": amountError
+                            })}
+                    />
+                    {amountError && (<div className="text-sm text-white bg-error absolute top-[-10px] px-1">{amountError}</div>)}
+                </div>
 
-                <Input
-                    type="text"
-                    name="custom_sum"
-                    min="0"
-                    placeholder="Другая сумма"
-                    value={customAmount}
-                    onChange={handleCustomAmount}
-                    className="text-center px-6 py-4 flex-1"
-                />
         </div>
     );
 };
@@ -62,6 +69,8 @@ const AmountSelector = ({amounts, onChange}) => {
 AmountSelector.propTypes = {
     amounts: PropTypes.array.isRequired,
     onChange: PropTypes.func.isRequired,
+    className: PropTypes.string,
+    amountError: PropTypes.string,
 }
 
 export default AmountSelector;
