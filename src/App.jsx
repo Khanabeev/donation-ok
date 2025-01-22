@@ -9,6 +9,8 @@ import ProtectedRoute from "@/middleware/ProtectedRoute.jsx";
 const App = () => {
     const [isAdminOfGroup, setIsAdminOfGroup] = useState(false);
     const [groupId, setGroupId] = useState(null);
+    const [userName, setUserName] = useState(null);
+    const [userId, setUserId] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
 
     const onSuccess = () => {
@@ -16,7 +18,10 @@ const App = () => {
         const params = new URLSearchParams(window.location.search);
         setIsAdminOfGroup(params.get("viewer_type") === "ADMIN");
         setGroupId(params.get("group_id"));
-        console.log(params.get("group_id"))
+        setUserId(params.get("logged_user_id"))
+        setUserName(params.get("user_name"))
+
+        console.log(params.get("logged_user_id"));
 
         setIsLoading(false);
     };
@@ -39,12 +44,12 @@ const App = () => {
         <Routes>
             {/* Доступ только администраторам */}
             <Route element={<ProtectedRoute isAdminOfGroup={isAdminOfGroup} adminOnly/>}>
-                <Route index path="/" element={<Welcome />} />
+                <Route index path="/" element={<Welcome/>}/>
                 <Route path="/settings" element={<Settings groupId={groupId}/>}/>
             </Route>
 
             {/* Доступ для всех */}
-            <Route path="/donate" element={<Donation/>}/>
+            <Route path="/donate" element={<Donation groupId={groupId} userId={userId}/>}/>
         </Routes>
     );
 };

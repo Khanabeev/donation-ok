@@ -97,7 +97,7 @@ const Settings = ({groupId}) => {
     );
 }
 Settings.propTypes = {
-    groupId: PropTypes.string.isRequired,
+    groupId: PropTypes.string,
 }
 
 export default Settings;

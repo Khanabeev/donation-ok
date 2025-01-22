@@ -22,3 +22,17 @@ export const registerGroup = async (groupId, clientId, token) => {
             throw new ServiceUnavailableError();
         })
 }
+
+export const fetchIdentity = async (groupId) => {
+    try {
+        const response = await http.get(`/fapi/vk/info`, {
+            params: {
+                gid: groupId,
+            },
+        });
+        return response.data; // Возвращаем данные ответа
+    } catch (error) {
+        console.error("Ошибка при получении данных:", error);
+        throw new ServiceUnavailableError();
+    }
+};

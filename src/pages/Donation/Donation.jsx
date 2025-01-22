@@ -1,7 +1,5 @@
-import React, {useEffect, useState} from "react";
-import {callApi} from "@/core/okSdk.js";
+import {useEffect, useState} from "react";
 import HeaderPanel from "@/components/HeaderPanel/HeaderPanel.jsx";
-import {BiDonateHeart} from "react-icons/bi";
 import ContentPanel from "@/components/ContentPanel/ContentPanel.jsx";
 import AmountSelector from "@/components/AmountSelector/AmountSelector.jsx";
 import Button from "@/components/Button/Button.jsx";
@@ -11,9 +9,17 @@ import {FiCheckSquare, FiSquare} from "react-icons/fi";
 import Popover from "@/components/Popover/Popover.jsx";
 import {GoQuestion} from "react-icons/go";
 import cn from "classnames";
+import PropTypes from "prop-types";
+import {fetchIdentity} from "@/api/backend.js";
+import {extractDonationSettings} from "@/utils/ProcessResponse.js";
+import {generateToken} from "@/utils/JwtHelper.js";
 
-const Donation = ({groupId}) => {
+const Donation = ({groupId, userId}) => {
+    groupId = '70000033151402';
+    const [isLoading, setIsLoading] = useState(false);
+    const [settings, setSettings] = useState({});
     const [groupName, setGroupName] = useState("");
+    const [projectId, setProjectId] = useState(356613);
 
     const [amounts, setAmounts] = useState([300, 500, 600, 700, 800, 1000]);
     const [selectedAmount, setSelectedAmount] = useState(0);
@@ -25,7 +31,6 @@ const Donation = ({groupId}) => {
     const [email, setEmail] = useState("");
     const [isEmailRequired, setIsEmailRequired] = useState(true);
     const [emailError, setEmailError] = useState(null);
-
 
     const [isButtonDisabled, setIsButtonDisabled] = useState(true);
 
@@ -53,8 +58,30 @@ const Donation = ({groupId}) => {
         setIsRecurrentPayment(prevState => !prevState);
     }
 
-    const handleDonate = (amount) => {
-        alert(`Вы пожертвовали ${amount} рублей!`);
+    const getPayload = () => {
+        return {
+            "uid": userId, // id пользователя
+            "project_id": projectId, //Идентификатор проекта пожертвования. Здесь не совсем понятно, это айдишник группы?
+            "utm_source": "ok",  //Источник трафика (UTM-метка).
+            "utm_medium": "social", //Тип трафика (UTM-метка).
+            "target_id": null, //Идентификатор адресного сбора (если есть).
+            "source_url": settings.generalInfo.landingUrl, //URL для перенаправления после успешного пожертвования.
+            "name": settings.userInfo.name,
+            "email": email,
+            "phone": "",
+            "comment": "",
+            "sum": selectedAmount, // Выбранная сумма пожертвования (Можно только это поле оставить?)
+            "repeat": isRecurrentPayment,
+            "payment_method": "card", // Метод оплаты
+            "iat": 1692172800 // Метка создания токена
+        }
+    }
+
+    const handleDonate = () => {
+        const payload = getPayload()
+        generateToken(payload, 'vk').then((token) => {
+            console.log("JWT:", token);
+        });
     };
 
     const isValidEmail = (email) => {
@@ -67,11 +94,26 @@ const Donation = ({groupId}) => {
     };
 
     const isDonationDataValid = () => {
-        console.log(paymentMethodError,
-            amountError,
-            emailError)
         return (!paymentMethodError && !amountError && !emailError)
     }
+
+    // Получение информации о группе
+    useEffect(() => {
+        setIsLoading(true);
+        const fetchData = async () => {
+            try {
+                const data = await fetchIdentity(groupId);
+                const processedData = extractDonationSettings(data)
+                setSettings(processedData);
+            } catch (err) {
+                console.log(err.message || "Ошибка загрузки данных");
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchData();
+    }, []);
 
     // Проверка минимальной суммы
     useEffect(() => {
@@ -109,28 +151,29 @@ const Donation = ({groupId}) => {
     // Активация кнопки
     useEffect(() => {
         setIsButtonDisabled(false);
-        console.log(isDonationDataValid())
         if (!isDonationDataValid()) {
             setIsButtonDisabled(true);
         }
     }, [paymentMethodError, amountError, emailError]);
 
-
-    const gid = '70000033151402';
-    callApi('group.getInfo', {uids: [gid], fields: ['name']})
-        .then((res) => {
-            setGroupName(res[0].name);
-        })
-
+    if(Object.keys(settings).length === 0) {
+        return (
+            <div>Загрузка...</div>
+        )
+    }
     return (
         <>
             <HeaderPanel>
                 <div className="flex flex-col gap-4">
                     <div className="flex gap-4 items-center">
-                        <BiDonateHeart className="text-6xl"/>
+                        <img
+                            src={settings.generalInfo.fundLogo}
+                            alt={settings.generalInfo.fundName}
+                            className="rounded-full w-16 h-16"
+                        />
                         <div className="flex flex-col gap-1">
-                            <div className="font-bold text-lg">Помощь&nbsp;{groupName}</div>
-                            <div>Помощь некоммерческой организации</div>
+                            <div className="font-bold text-lg">Помощь&nbsp;{settings.generalInfo.fundName}</div>
+                            <div>{settings.generalInfo.header}</div>
                         </div>
                     </div>
                 </div>
@@ -138,12 +181,11 @@ const Donation = ({groupId}) => {
             <ContentPanel>
                 <div className="flex flex-col gap-4">
                     <p className="text-lg text-base-300">Сумма пожертвования</p>
-                    <div>
-                        <AmountSelector amounts={amounts}
-                                        onChange={setSelectedAmount}
-                                        amountError={amountError}/>
 
-                    </div>
+                    <AmountSelector amounts={settings.formSettings.sum.badges.map((item)=> item.value ?? null)}
+                                    onChange={setSelectedAmount}
+                                    amountError={amountError}/>
+
 
                     <div className="relative">
                         <Input type="email"
@@ -165,7 +207,7 @@ const Donation = ({groupId}) => {
                                 <FiCheckSquare className="text-primary"/>
                             ) : <FiSquare className="text-base-200"/>}
                             </div>
-                            <span>Повторяющийся платеж</span>
+                            <span>{settings.formSettings.repeat.text}</span>
 
                             <div>
                                 <Popover trigger={<GoQuestion className='text-xl'/>}
@@ -174,8 +216,7 @@ const Donation = ({groupId}) => {
 
                         </div>
 
-                        <p className="text-xs text-base-300">Наша работа возможна благодаря вашей помощи.
-                            Если вы можете помогать нам регулярно, мы сможем сделать еще больше.</p>
+                        <p className="text-xs text-base-300">{settings.formSettings.repeat.textAfter}</p>
                     </div>
 
                     <Button
@@ -184,14 +225,23 @@ const Donation = ({groupId}) => {
                         variant="secondary"
                         disabled={isButtonDisabled}
                         onClick={handleDonate}
+                        style = {{
+                            backgroundColor: `${settings.formSettings.button.style.backColor}`,
+                            color: `${settings.formSettings.button.style.color}`
+                        }}
                     >
-                        Помочь
+                        {settings.formSettings.button.text}
                     </Button>
                 </div>
-
             </ContentPanel>
         </>
     );
 };
+
+Donation.propTypes = {
+    groupId: PropTypes.string,
+    userId: PropTypes.string,
+    userName: PropTypes.string,
+}
 
 export default Donation;
