@@ -5,6 +5,7 @@ import Donation from "./pages/Donation/Donation.jsx";
 import Welcome from "./pages/Welcome/Welcome.jsx";
 import Settings from "./pages/Settings/Settings.jsx";
 import ProtectedRoute from "@/middleware/ProtectedRoute.jsx";
+import SuccessPayment from "@/pages/SuccessPayment/SuccessPayment.jsx";
 
 const App = () => {
     const [isAdminOfGroup, setIsAdminOfGroup] = useState(false);
@@ -16,13 +17,11 @@ const App = () => {
     const onSuccess = () => {
         console.log("FAPI инициализирован");
         const params = new URLSearchParams(window.location.search);
+        params.keys().map(key => console.log(key));
         setIsAdminOfGroup(params.get("viewer_type") === "ADMIN");
         setGroupId(params.get("group_id"));
         setUserId(params.get("logged_user_id"))
         setUserName(params.get("user_name"))
-
-        console.log(params.get("logged_user_id"));
-
         setIsLoading(false);
     };
 
@@ -49,7 +48,8 @@ const App = () => {
             </Route>
 
             {/* Доступ для всех */}
-            <Route path="/donate" element={<Donation groupId={groupId} userId={userId}/>}/>
+            <Route path="/donate" element={<Donation groupId={groupId} userId={userId} userName={userName}/>}/>
+            <Route path="/success" element={<SuccessPayment/>}/>
         </Routes>
     );
 };

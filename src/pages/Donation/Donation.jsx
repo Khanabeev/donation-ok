@@ -13,8 +13,9 @@ import PropTypes from "prop-types";
 import {fetchIdentity} from "@/api/backend.js";
 import {extractDonationSettings} from "@/utils/ProcessResponse.js";
 import {generateToken} from "@/utils/JwtHelper.js";
+import queryString from 'query-string';
 
-const Donation = ({groupId, userId}) => {
+const Donation = ({groupId, userId, userName}) => {
     groupId = '70000033151402';
     const [isLoading, setIsLoading] = useState(false);
     const [settings, setSettings] = useState({});
@@ -36,23 +37,9 @@ const Donation = ({groupId, userId}) => {
 
     const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("");
     const [paymentMethodError, setPaymentMethodError] = useState(null);
-    const [paymentMethods, setPaymentMethods] = useState([
-        {
-            payTypes: ["visa", "master", "mir"],
-            name: "Банковские карты",
-            slug: "bank_card"
-        },
-        {
-            payTypes: ["mir"],
-            name: "Mir Pay",
-            slug: "mir_pay"
-        },
-        {
-            payTypes: ["spay"],
-            name: "SberPay",
-            slug: "spay"
-        },
-    ]);
+    const [paymentMethods, setPaymentMethods] = useState(["card", "mobile"]);
+
+    const parsedHash = queryString.parse(window.location.href);
 
     const toggleRecurrent = () => {
         setIsRecurrentPayment(prevState => !prevState);
@@ -65,22 +52,21 @@ const Donation = ({groupId, userId}) => {
             "utm_source": "ok",  //Источник трафика (UTM-метка).
             "utm_medium": "social", //Тип трафика (UTM-метка).
             "target_id": null, //Идентификатор адресного сбора (если есть).
-            "source_url": settings.generalInfo.landingUrl, //URL для перенаправления после успешного пожертвования.
-            "name": settings.userInfo.name,
+            "source_url": `https://ok.ru/app/${import.meta.env.VITE_APP_ID}#success`, //URL для перенаправления после успешного пожертвования.
+            "name": userName,
             "email": email,
             "phone": "",
             "comment": "",
             "sum": selectedAmount, // Выбранная сумма пожертвования (Можно только это поле оставить?)
-            "repeat": isRecurrentPayment,
-            "payment_method": "card", // Метод оплаты
-            "iat": 1692172800 // Метка создания токена
+            "repeat": isRecurrentPayment ? '1' : '0',
+            "payment_method": selectedPaymentMethod, // Метод оплаты
         }
     }
 
     const handleDonate = () => {
-        const payload = getPayload()
+        const payload = getPayload();
         generateToken(payload, 'vk').then((token) => {
-            console.log("JWT:", token);
+            window.location.assign(settings.generalInfo.landingUrl + "?source=ok&jwt=" + token);
         });
     };
 
@@ -105,6 +91,7 @@ const Donation = ({groupId, userId}) => {
                 const data = await fetchIdentity(groupId);
                 const processedData = extractDonationSettings(data)
                 setSettings(processedData);
+                setPaymentMethods(processedData.formSettings.payType.default ?? ['card'])
             } catch (err) {
                 console.log(err.message || "Ошибка загрузки данных");
             } finally {
@@ -199,7 +186,7 @@ const Donation = ({groupId, userId}) => {
                             <div className="text-sm text-white bg-error absolute top-[-10px] px-1">{emailError}</div>)}
                     </div>
 
-                    <PaymentMethodSelector methods={paymentMethods} onChange={setSelectedPaymentMethod}/>
+                    <PaymentMethodSelector availableMethods={paymentMethods} onChange={setSelectedPaymentMethod}/>
                     <div>
                         <div className="flex items-center gap-2 cursor-pointer text-base-300 transition duration-300"
                              onClick={() => toggleRecurrent()}>

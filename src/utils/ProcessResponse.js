@@ -11,6 +11,7 @@
  * @property {Object} sum - Настройки суммы.
  * @property {Object} repeat - Настройки повторного платежа.
  * @property {Object} payType - Настройки методов оплаты.
+ * @property {Object} payType.default - Дефолтный метод оплаты.
  * @property {string} btnText - Текст кнопки.
  * @property {Object} btnStyle - Стили кнопки.
  */
