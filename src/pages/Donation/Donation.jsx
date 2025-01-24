@@ -1,4 +1,3 @@
-import {useEffect, useState} from "react";
 import HeaderPanel from "@/components/HeaderPanel/HeaderPanel.jsx";
 import ContentPanel from "@/components/ContentPanel/ContentPanel.jsx";
 import AmountSelector from "@/components/AmountSelector/AmountSelector.jsx";
@@ -10,53 +9,38 @@ import Popover from "@/components/Popover/Popover.jsx";
 import {GoQuestion} from "react-icons/go";
 import cn from "classnames";
 import PropTypes from "prop-types";
-import {fetchIdentity} from "@/api/backend.js";
-import {extractDonationSettings} from "@/utils/ProcessResponse.js";
 import {generateToken} from "@/utils/JwtHelper.js";
-import queryString from 'query-string';
 import {useDonationSettings} from "@/hooks/useDonationSettings.js";
+import {useDonationValidation} from "@/hooks/useDonationValidation.js";
 
-const Donation = ({groupId = '70000033151402', userId, userName}) => {
+const Donation = ({groupId, userId, userName}) => {
     groupId = '70000033151402';
-    const [isLoading, setIsLoading] = useState(false);
-    const [settings, setSettings] = useState({});
-    const [groupName, setGroupName] = useState("");
-    const [projectId, setProjectId] = useState(356613);
-
-    const [amounts, setAmounts] = useState([300, 500, 1000]);
-    const [selectedAmount, setSelectedAmount] = useState(0);
-    const [minAmount, setMinAmount] = useState(10);
-    const [amountError, setAmountError] = useState(null);
-
-    const [isRecurrentPayment, setIsRecurrentPayment] = useState(true);
-
-    const [email, setEmail] = useState("");
-    const [isEmailRequired, setIsEmailRequired] = useState(true);
-    const [emailError, setEmailError] = useState(null);
-
-    const [isButtonDisabled, setIsButtonDisabled] = useState(true);
-
-    const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("");
-    const [paymentMethodError, setPaymentMethodError] = useState(null);
-    const [paymentMethods, setPaymentMethods] = useState(["card", "mobile"]);
-
-    const parsedHash = queryString.parse(window.location.href);
-
-    const toggleRecurrent = () => {
-        setIsRecurrentPayment(prevState => !prevState);
-    }
 
     const {
-        settings2,
-        isLoading2,
-        paymentMethods2,
-        error,
+        settings,
+        paymentMethods,
+        isLoading
     } = useDonationSettings(groupId);
+
+    const {
+        email,
+        setEmail,
+        selectedAmount,
+        setSelectedAmount,
+        amountError,
+        selectedPaymentMethod,
+        setSelectedPaymentMethod,
+        isRecurrentPayment,
+        toggleRecurrent,
+        emailError,
+        paymentMethodError,
+        isButtonDisabled,
+    } = useDonationValidation(settings);
 
     const handleDonate = () => {
         const payload = {
             "uid": userId, // id пользователя
-            "project_id": projectId, //Идентификатор проекта пожертвования. Здесь не совсем понятно, это айдишник группы?
+            "project_id": settings.projectInfo.id, //Идентификатор проекта пожертвования. Приходит с бэка
             "utm_source": "ok",  //Источник трафика (UTM-метка).
             "utm_medium": "social", //Тип трафика (UTM-метка).
             "target_id": null, //Идентификатор адресного сбора (если есть).
@@ -65,7 +49,7 @@ const Donation = ({groupId = '70000033151402', userId, userName}) => {
             "email": email,
             "phone": "",
             "comment": "",
-            "sum": selectedAmount, // Выбранная сумма пожертвования (Можно только это поле оставить?)
+            "sum": selectedAmount, // Выбранная сумма пожертвования
             "repeat": isRecurrentPayment ? '1' : '0',
             "payment_method": selectedPaymentMethod, // Метод оплаты
         }
@@ -74,80 +58,7 @@ const Donation = ({groupId = '70000033151402', userId, userName}) => {
         });
     };
 
-    const isValidEmail = (email) => {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(email);
-    };
-
-    const isValidAmount = () => {
-        return selectedAmount >= minAmount;
-    };
-
-    const isDonationDataValid = () => {
-        return (!paymentMethodError && !amountError && !emailError)
-    }
-
-    // Получение информации о группе
-    useEffect(() => {
-        setIsLoading(true);
-        const fetchData = async () => {
-            try {
-                const data = await fetchIdentity(groupId);
-                const processedData = extractDonationSettings(data)
-                setSettings(processedData);
-                setPaymentMethods(processedData.formSettings.payType.default ?? ['card'])
-            } catch (err) {
-                console.log(err.message || "Ошибка загрузки данных");
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        fetchData();
-    }, []);
-
-    // Проверка минимальной суммы
-    useEffect(() => {
-        setAmountError(null);
-        if (!isValidAmount()) {
-            setAmountError("Введите сумму от " + minAmount + "₽");
-        }
-    }, [selectedAmount]);
-
-    // Проверка почты
-    useEffect(() => {
-        setEmailError(null)
-        if (email === "" && isEmailRequired) {
-            setEmailError("Не указан email")
-        }
-
-        if (email !== "" && !isValidEmail(email)) {
-            setEmailError("Некорректный email");
-        }
-    }, [email]);
-
-    // Проверка, что выбран метод оплаты
-    useEffect(() => {
-        setPaymentMethodError(null)
-        if (selectedPaymentMethod === "") {
-            setPaymentMethodError("Укажите способ оплаты")
-        }
-    }, [selectedPaymentMethod]);
-
-    // Установка изначальной суммы
-    useEffect(() => {
-        setSelectedAmount(amounts[0]);
-    }, [amounts]);
-
-    // Активация кнопки
-    useEffect(() => {
-        setIsButtonDisabled(false);
-        if (!isDonationDataValid()) {
-            setIsButtonDisabled(true);
-        }
-    }, [paymentMethodError, amountError, emailError]);
-
-    if(Object.keys(settings).length === 0) {
+    if(isLoading) {
         return (
             <div>Загрузка...</div>
         )

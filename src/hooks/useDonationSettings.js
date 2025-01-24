@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
-import { fetchIdentity } from "@/api/backend.js";
-import { extractDonationSettings } from "@/utils/ProcessResponse.js";
+import {fetchIdentity} from "@/api/backend.js";
+import {extractDonationSettings} from "@/utils/ProcessResponse.js";
+import {useEffect, useState} from "react";
 
 export const useDonationSettings = (groupId) => {
     const [settings, setSettings] = useState(null);
@@ -15,8 +15,13 @@ export const useDonationSettings = (groupId) => {
         try {
             const data = await fetchIdentity(groupId);
             const processedData = extractDonationSettings(data);
+
+            if (!processedData) {
+                throw new Error("Не удалось обработать настройки пожертвований");
+            }
+
             setSettings(processedData);
-            setPaymentMethods(data.fund_form.data.fields.payType?.default || ["card"]);
+            setPaymentMethods(processedData?.formSettings?.payType?.default || ["card"]);
         } catch (err) {
             console.error("Ошибка загрузки данных:", err);
             setError(err.message || "Не удалось загрузить настройки");
@@ -25,13 +30,8 @@ export const useDonationSettings = (groupId) => {
         }
     };
 
-    // Вызов функции при первом рендере
     useEffect(() => {
-        const loadSettings = async () => {
-            await fetchDonationSettings();
-        }
-
-        loadSettings();
+        fetchDonationSettings();
     }, []);
 
     return { settings, isLoading, paymentMethods, error };
