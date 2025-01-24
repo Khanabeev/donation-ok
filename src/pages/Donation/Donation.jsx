@@ -14,15 +14,16 @@ import {fetchIdentity} from "@/api/backend.js";
 import {extractDonationSettings} from "@/utils/ProcessResponse.js";
 import {generateToken} from "@/utils/JwtHelper.js";
 import queryString from 'query-string';
+import {useDonationSettings} from "@/hooks/useDonationSettings.js";
 
-const Donation = ({groupId, userId, userName}) => {
+const Donation = ({groupId = '70000033151402', userId, userName}) => {
     groupId = '70000033151402';
     const [isLoading, setIsLoading] = useState(false);
     const [settings, setSettings] = useState({});
     const [groupName, setGroupName] = useState("");
     const [projectId, setProjectId] = useState(356613);
 
-    const [amounts, setAmounts] = useState([300, 500, 600, 700, 800, 1000]);
+    const [amounts, setAmounts] = useState([300, 500, 1000]);
     const [selectedAmount, setSelectedAmount] = useState(0);
     const [minAmount, setMinAmount] = useState(10);
     const [amountError, setAmountError] = useState(null);
@@ -45,8 +46,15 @@ const Donation = ({groupId, userId, userName}) => {
         setIsRecurrentPayment(prevState => !prevState);
     }
 
-    const getPayload = () => {
-        return {
+    const {
+        settings2,
+        isLoading2,
+        paymentMethods2,
+        error,
+    } = useDonationSettings(groupId);
+
+    const handleDonate = () => {
+        const payload = {
             "uid": userId, // id пользователя
             "project_id": projectId, //Идентификатор проекта пожертвования. Здесь не совсем понятно, это айдишник группы?
             "utm_source": "ok",  //Источник трафика (UTM-метка).
@@ -61,10 +69,6 @@ const Donation = ({groupId, userId, userName}) => {
             "repeat": isRecurrentPayment ? '1' : '0',
             "payment_method": selectedPaymentMethod, // Метод оплаты
         }
-    }
-
-    const handleDonate = () => {
-        const payload = getPayload();
         generateToken(payload, 'vk').then((token) => {
             window.location.assign(settings.generalInfo.landingUrl + "?source=ok&jwt=" + token);
         });
