@@ -19,6 +19,8 @@
 /**
  * @typedef {Object} FundForm
  * @property {Object} data - Данные формы.
+ * @property {string} data.urlOffer - Условия офферты.
+ * @property {string} data.urlPersonalData - Условия обработки персональных данных.
  * @property {FieldSettings} data.fields - Поля формы.
  * @property {Object} clientData - Данные клиента.
  * @property {Object} clientData.company - Данные компании.
@@ -76,6 +78,11 @@ export const extractDonationSettings = (data) => {
             text: fund_form.data.btnText,
             style: fund_form.data.btnStyle,
         },
+        comment: fund_form.data.fields.comment,
+        terms:{
+            urlOffer: fund_form.data.urlOffer,
+            urlPersonalData: fund_form.data.urlPersonalData,
+        }
     };
 
     // Информация о проекте

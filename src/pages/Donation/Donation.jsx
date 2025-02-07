@@ -13,6 +13,8 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {createSchema} from "@/schemas/donation.js";
 import {useEffect, useState} from "react";
 import Loader from "@/components/Loader/Loader.jsx";
+import CommentInput from "@/components/CommentInput/CommentInput.jsx";
+import AcceptTerms from "@/components/AcceptTerms/AcceptTerms.jsx";
 
 const Donation = ({settings, userId, userName}) => {
 
@@ -31,6 +33,7 @@ const Donation = ({settings, userId, userName}) => {
         handleSubmit,
         watch,
         setValue,
+        getValues,
         setError,
         clearErrors,
         formState: {errors},
@@ -40,13 +43,14 @@ const Donation = ({settings, userId, userName}) => {
             amount: null,
             custom_amount: null,
             email: "",
+            comment: "",
             is_recurrent: false,
             payment_method: "card",
         }
     })
 
     useEffect(() => {
-        setPaymentMethods(settings.formSettings?.payType?.default || ["card"]);
+        setPaymentMethods(settings.formSettings?.payType?.default || ["card", "mir_pay"]);
     }, [])
 
     const onDonate = (values) => {
@@ -61,7 +65,7 @@ const Donation = ({settings, userId, userName}) => {
             "name": userName,
             "email": values.email,
             "phone": "",
-            "comment": "",
+            "comment": values.comment,
             "sum": values.custom_amount || values.amount, // Выбранная сумма пожертвования
             "repeat": values.is_reccurent ? '1' : '0',
             "payment_method": values.payment_method, // Метод оплаты
@@ -77,7 +81,7 @@ const Donation = ({settings, userId, userName}) => {
             <Loader/>
         )
     }
-        console.log(errors)
+        console.log(errors, getValues())
     return (
         <>
 
@@ -110,11 +114,16 @@ const Donation = ({settings, userId, userName}) => {
                         <PaymentMethodSelector
                             availableMethods={paymentMethods}
                             register={register}
-                            errors={errors}
+                            setValue={setValue}
                         />
                         <RecurrentPaymentToggle
                             text={settings.formSettings.repeat.text}
                             textAfter={settings.formSettings.repeat.textAfter}
+                        />
+                        <CommentInput
+                            register={register}
+                            errors={errors}
+                            settings={settings}
                         />
                         <PaymentButton
                             type="submit"
@@ -123,6 +132,11 @@ const Donation = ({settings, userId, userName}) => {
                                 color: settings.formSettings.button.style.color,
                             }}
                             text={settings.formSettings.button.text}
+                        />
+                        <AcceptTerms
+                            register={register}
+                            setValue={setValue}
+                            settings={settings}
                         />
                     </div>
                 </form>

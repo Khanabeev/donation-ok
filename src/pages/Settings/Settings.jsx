@@ -44,12 +44,12 @@ const Settings = ({groupId}) => {
             </HeaderPanel>
             <ContentPanel>
                 <p className="text-2xl font-bold mb-4">Приветствуем!</p>
-                <p className="text-base-300">Мы — MIXPLAT, платежный сервис, который помогает собирать
+                <p className="text-base-300">Мы — МИКСПЛАТ, платежный сервис, который помогает собирать
                     пожертвования
                     для НКО России более 8 лет. Теперь наше решение есть и в Одноклассниках.</p>
                 <p className="text-base-300">Если Вы уже работаете с нами, для активации приложения вставьте,
                     пожалуйста, код
-                    из личного кабинета MIXPLAT тут:</p>
+                    из личного кабинета МИКСПЛАТ тут:</p>
                 <div className={styles.form}>
                     <div className={styles.textarea}>
                                 <textarea
@@ -80,7 +80,7 @@ const Settings = ({groupId}) => {
                     Если еще нет, пройдите, пожалуйста, простую регистрацию на нашем сайте.&nbsp;<a
                     className={styles.link} href="https://stat.mixplat.ru/donation/fundraising/vk/"
                     target={"_blank"}>Получить ключ
-                    в ЛК Mixplat</a>
+                    в ЛК МИКСПЛАТ</a>
                 </p>
             </ContentPanel>
 

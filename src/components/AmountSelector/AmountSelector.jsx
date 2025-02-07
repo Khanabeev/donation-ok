@@ -60,6 +60,7 @@ const AmountSelector = ({register,min, max, badges, defaultBadge, setValue, erro
                 type: "max",
                 message: `Введите сумму не больше ${max} ₽`
             }, {shouldFocus: true})
+            setValue("custom_amount", max)
             return;
         }
 
@@ -74,7 +75,7 @@ const AmountSelector = ({register,min, max, badges, defaultBadge, setValue, erro
                         className={cn(
                             "flex items-center justify-center px-6 py-4 rounded-lg cursor-pointer border text-md whitespace-nowrap font-medium border-base-200 bg-base-100 text-base-300 transition duration-300",
                             {
-                                "bg-secondary text-primary border-0": selectedIndex === index,
+                                "bg-secondary text-primary border-1 border-primary": selectedIndex === index,
                             }
                         )}
                     >

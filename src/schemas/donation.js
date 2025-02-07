@@ -3,6 +3,9 @@ import {z} from "zod"
 export const createSchema = ({min, max}) => {
     return z.object({
         email: z.string({message: "Введите Email"}).min(1, "Введите Email").email('Некорректный Email'),
+        comment: z.string()
+            .max(255, "Максимальное количество знаков 255")
+            .nullish(),
         amount: z.preprocess((val) => Number(val), z.number()
                 .nullish()),
         custom_amount: z.preprocess((val) => Number(val), z.number()
