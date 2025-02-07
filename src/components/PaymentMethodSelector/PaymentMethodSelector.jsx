@@ -2,7 +2,7 @@ import {useState} from "react";
 import cn from "classnames";
 import PropTypes from "prop-types";
 
-const PaymentMethodSelector = ({availableMethods, onChange, currentSelectedMethod = ""}) => {
+const PaymentMethodSelector = ({availableMethods, register}) => {
     const [selectedIndex, setSelectedIndex] = useState(null);
 
     const payment_type_card = 'card',
@@ -12,11 +12,11 @@ const PaymentMethodSelector = ({availableMethods, onChange, currentSelectedMetho
         payment_type_sber_pay = 'sberpay',
         payment_type_sbp = 'sbp';
 
-    let payment_types = [
+    let payment_methods = [
         {
             value: payment_type_card,
             recurrent: true,
-            label: (
+            html: (
                 <>
                     <div className="flex gap-1 h-3">
                         <img className="h-full" src={"/img/logo/visa.svg"} alt={""}/>
@@ -30,7 +30,7 @@ const PaymentMethodSelector = ({availableMethods, onChange, currentSelectedMetho
         {
             value: payment_type_sbp,
             recurrent: true,
-            label: (
+            html: (
                 <>
                     <div className="flex gap-1 h-3">
                         <img className="h-full" src={"/img/logo/sbp_only.svg"} alt={""}/>
@@ -43,7 +43,7 @@ const PaymentMethodSelector = ({availableMethods, onChange, currentSelectedMetho
         {
             value: payment_type_sber_pay,
             recurrent: true,
-            label: (
+            html: (
                 <>
                     <div className="flex gap-1 h-3">
                         <img className="h-full" src={"/img/logo/spay.svg"} alt={""}/>
@@ -55,7 +55,7 @@ const PaymentMethodSelector = ({availableMethods, onChange, currentSelectedMetho
         {
             value: payment_type_mobile,
             recurrent: false,
-            label: (
+            html: (
                 <>
                     <div className="flex gap-1 h-3">
                         <img className="h-full" src={"/img/logo/beeline.svg"} alt={""}/>
@@ -71,7 +71,7 @@ const PaymentMethodSelector = ({availableMethods, onChange, currentSelectedMetho
         {
             value: payment_type_yandex,
             recurrent: true,
-            label: (
+            html: (
                 <>
                     <div className="flex gap-1 h-3">
                         <img className="h-full" src={"/img/logo/ya_pay.svg"} alt={""}/>
@@ -84,7 +84,7 @@ const PaymentMethodSelector = ({availableMethods, onChange, currentSelectedMetho
         {
             value: payment_type_mir,
             recurrent: true,
-            label: (
+            html: (
                 <>
                     <div className="flex gap-1 h-3">
                         <img className="h-full" src={"/img/logo/mir.svg"} alt={""}/>
@@ -95,16 +95,15 @@ const PaymentMethodSelector = ({availableMethods, onChange, currentSelectedMetho
         },
     ];
 
-    const handleSelect = (index, method) => {
+    const handleSelect = (index) => {
         setSelectedIndex(index);
-        onChange(method); // Возвращаем выбранный метод
     };
 
     const generatePaymentLabel = (method, index) => {
-        const paymentType = payment_types.find(function (payment_type) {
+        const paymentMethod = payment_methods.find(function (payment_type) {
             return payment_type.value === method;
         });
-        if (paymentType) {
+        if (paymentMethod) {
             return (<label
                 htmlFor={`method-${index}`}
                 className={cn(
@@ -113,7 +112,7 @@ const PaymentMethodSelector = ({availableMethods, onChange, currentSelectedMetho
                         "bg-secondary text-primary border-0": selectedIndex === index,
                     }
                 )}>
-                {paymentType.label}
+                {paymentMethod.html}
             </label>);
         }
     }
@@ -123,11 +122,13 @@ const PaymentMethodSelector = ({availableMethods, onChange, currentSelectedMetho
             {availableMethods.map((method, index) => (
                 <div key={index} className="flex-1">
                     <input
+                        {...register('payment_method')}
                         id={`method-${index}`}
                         className="hidden"
                         type="radio"
                         name="paymentMethod"
-                        onChange={() => handleSelect(index, method)}
+                        value={method}
+                        onChange={() => handleSelect(index)}
                     />
                     {generatePaymentLabel(method, index)}
                 </div>
@@ -138,8 +139,8 @@ const PaymentMethodSelector = ({availableMethods, onChange, currentSelectedMetho
 
 PaymentMethodSelector.propTypes = {
     availableMethods: PropTypes.array.isRequired,
-    onChange: PropTypes.func.isRequired,
-    currentSelectedMethod: PropTypes.string
+    register: PropTypes.func.isRequired,
+    errors: PropTypes.object.isRequired,
 };
 
 export default PaymentMethodSelector;

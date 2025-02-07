@@ -22,7 +22,9 @@
  * @property {FieldSettings} data.fields - Поля формы.
  * @property {Object} clientData - Данные клиента.
  * @property {Object} clientData.company - Данные компании.
- * @property {string} clientData.company.title- Название компании.
+ * @property {string} clientData.company.title - Название компании.
+ * @property {Object} clientData.project.paymentMethods - Массив с данными по методам оплаты.
+ * @property {Object} clientData.project.operators - Операторы оплаты (СПБ(id=62), SberPay(id=20) и т.д.).
  */
 
 /**

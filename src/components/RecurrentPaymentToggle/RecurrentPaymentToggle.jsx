@@ -1,16 +1,15 @@
 import PropTypes from 'prop-types';
-import {FiCheckSquare, FiSquare} from "react-icons/fi";
+import {FiCheckSquare} from "react-icons/fi";
 import Popover from "@/components/Popover/Popover.jsx";
 import {GoQuestion} from "react-icons/go";
 
-const RecurrentPaymentToggle = ({isRecurrent, onToggle, text, textAfter }) => {
+const RecurrentPaymentToggle = ({text, textAfter}) => {
     return (
         <div>
             <div className="flex items-center gap-2 cursor-pointer text-base-300 transition duration-300"
-                 onClick={() => onToggle()}>
-                <div className="text-4xl">{isRecurrent ? (
+                 onClick={() => console.log('tuggle')}>
+                <div className="text-4xl">
                     <FiCheckSquare className="text-primary"/>
-                ) : <FiSquare className="text-base-200"/>}
                 </div>
                 <span>{text}</span>
 
@@ -27,10 +26,8 @@ const RecurrentPaymentToggle = ({isRecurrent, onToggle, text, textAfter }) => {
 };
 
 RecurrentPaymentToggle.propTypes = {
-    isRecurrent: PropTypes.bool,
     text: PropTypes.string,
     textAfter: PropTypes.string,
-    onToggle: PropTypes.func,
 };
 
 export default RecurrentPaymentToggle;

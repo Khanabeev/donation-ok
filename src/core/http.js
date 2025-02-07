@@ -28,7 +28,6 @@ http.interceptors.response.use(
                 new AuthStorage().removeToken();
                 break;
             default:
-                console.error('error', error);
                 break;
         }
 
