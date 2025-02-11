@@ -45,6 +45,7 @@ const Donation = ({settings, userId, userName}) => {
             email: "",
             comment: "",
             is_recurrent: false,
+            is_terms_accepted: true,
             payment_method: "card",
         }
     })
@@ -81,7 +82,8 @@ const Donation = ({settings, userId, userName}) => {
             <Loader/>
         )
     }
-        console.log(errors, getValues())
+
+    console.log(getValues())
     return (
         <>
 
@@ -91,53 +93,87 @@ const Donation = ({settings, userId, userName}) => {
             <ContentPanel>
                 <form onSubmit={handleSubmit(onDonate)}>
                     <div className="flex flex-col gap-4">
-                        <p className="text-lg text-base-300">Сумма пожертвования</p>
+                        {Object.entries(settings.formSettings)
+                            .filter(([, value]) => value?.state > 0)  // только активные
+                            .sort(([, a], [, b]) => a.order - b.order)  // сортировка по order
+                            .map(([key]) => {
+                                switch (key) {
 
-                        <AmountSelector
-                            badges={settings.formSettings.sum.badges.map((item) => item.value ?? null) || []}
-                            defaultBadge={settings.formSettings.sum.default || 10}
-                            min={min}
-                            max={max}
-                            register={register}
-                            errors={errors}
-                            setValue={setValue}
-                            setError={setError}
-                            clearErrors={clearErrors}
-                            watch={watch}
-                        />
+                                    case 'sum':
+                                        return (
+                                            <div key={key}>
+                                                <p className="text-lg text-base-300">Сумма пожертвования</p>
+                                                <AmountSelector
+                                                    badges={settings.formSettings.sum.badges.map((item) => item.value ?? null) || []}
+                                                    defaultBadge={settings.formSettings.sum.default || 10}
+                                                    min={min}
+                                                    max={max}
+                                                    register={register}
+                                                    errors={errors}
+                                                    setValue={setValue}
+                                                    setError={setError}
+                                                    clearErrors={clearErrors}
+                                                    watch={watch}
+                                                />
+                                            </div>)
 
-                        <EmailInput
-                            register={register}
-                            errors={errors}
-                        />
-
-                        <PaymentMethodSelector
-                            availableMethods={paymentMethods}
-                            register={register}
-                            setValue={setValue}
-                        />
-                        <RecurrentPaymentToggle
-                            text={settings.formSettings.repeat.text}
-                            textAfter={settings.formSettings.repeat.textAfter}
-                        />
-                        <CommentInput
-                            register={register}
-                            errors={errors}
-                            settings={settings}
-                        />
-                        <PaymentButton
-                            type="submit"
-                            style={{
-                                backgroundColor: settings.formSettings.button.style.backColor,
-                                color: settings.formSettings.button.style.color,
-                            }}
-                            text={settings.formSettings.button.text}
-                        />
-                        <AcceptTerms
-                            register={register}
-                            setValue={setValue}
-                            settings={settings}
-                        />
+                                    case 'email':
+                                        return (
+                                            <div key={key}>
+                                                <EmailInput
+                                                    register={register}
+                                                    errors={errors}
+                                                />
+                                            </div>
+                                        )
+                                    case 'comment':
+                                        return (
+                                            <div key={key}>
+                                                <CommentInput
+                                                    register={register}
+                                                    errors={errors}
+                                                    settings={settings}
+                                                />
+                                            </div>
+                                        )
+                                    case 'payType':
+                                        return (
+                                            <div key={key}>
+                                                <PaymentMethodSelector
+                                                    availableMethods={paymentMethods}
+                                                    register={register}
+                                                    setValue={setValue}
+                                                />
+                                            </div>
+                                        )
+                                    case 'repeat':
+                                        return (
+                                            <div key={key}>
+                                                <RecurrentPaymentToggle
+                                                    text={settings.formSettings.repeat.text}
+                                                    textAfter={settings.formSettings.repeat.textAfter}
+                                                    settings={settings}
+                                                    setValue={setValue}
+                                                />
+                                            </div>
+                                        )
+                                }
+                            })}
+                        <div className="flex flex-col gap-1">
+                            <PaymentButton
+                                type="submit"
+                                style={{
+                                    backgroundColor: settings.formSettings.button.style.backColor,
+                                    color: settings.formSettings.button.style.color,
+                                }}
+                                text={settings.formSettings.button.text}
+                            />
+                            <AcceptTerms
+                                register={register}
+                                setValue={setValue}
+                                settings={settings}
+                            />
+                        </div>
                     </div>
                 </form>
             </ContentPanel>

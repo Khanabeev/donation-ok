@@ -6,6 +6,7 @@ export const createSchema = ({min, max}) => {
         comment: z.string()
             .max(255, "Максимальное количество знаков 255")
             .nullish(),
+        is_terms_accepted: z.boolean(),
         amount: z.preprocess((val) => Number(val), z.number()
                 .nullish()),
         custom_amount: z.preprocess((val) => Number(val), z.number()

@@ -11,7 +11,7 @@ const EmailInput = ({register, errors}) => {
                    className={cn("input w-full h-14 text-center", {
                        "border-error": errors.email,
                    })}
-                   placeholder="Ваш email"
+                   placeholder="Ваш email (для чека)"
             />
             {errors.email && (
                 <div className="text-sm text-white bg-error absolute top-[-10px] px-1">{errors.email.message}</div>)}

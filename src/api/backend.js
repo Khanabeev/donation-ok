@@ -24,11 +24,12 @@ export const registerGroup = async (groupId, clientId, token) => {
         })
 }
 
-export const fetchIdentity = async (groupId) => {
+export const fetchIdentity = async (groupId, targetId) => {
     try {
         const response = await http.get(`/fapi/vk/info`, {
             params: {
                 gid: groupId,
+                targetId: targetId || null,
             },
         });
         return response.data; // Возвращаем данные ответа

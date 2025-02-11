@@ -10,6 +10,8 @@
  * @typedef {Object} FieldSettings
  * @property {Object} sum - Настройки суммы.
  * @property {Object} repeat - Настройки повторного платежа.
+ * @property {boolean} repeat.default - Дефолтное значения повторного платежа.
+ * @property {number} repeat.variant - Вариант отображения
  * @property {Object} payType - Настройки методов оплаты.
  * @property {Object} payType.default - Дефолтный метод оплаты.
  * @property {string} btnText - Текст кнопки.
@@ -78,6 +80,7 @@ export const extractDonationSettings = (data) => {
             text: fund_form.data.btnText,
             style: fund_form.data.btnStyle,
         },
+        email: fund_form.data.fields.email,
         comment: fund_form.data.fields.comment,
         terms:{
             urlOffer: fund_form.data.urlOffer,

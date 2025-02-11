@@ -9,14 +9,14 @@ const AcceptTerms = ({register, setValue, settings}) => {
         setValue("is_terms_accepted", true)
     }, []);
     return (
-        <div className="flex gap-1 text-xs mt-[-10px] place-content-center">
+        <div className="flex gap-1 text-xs text-base-300 place-content-center">
             <input
                 {...register('is_terms_accepted')}
                 type="checkbox"
                 name="is_terms_accepted"
-                className="input input-xs text-red-500"
+                className="accent-base-300"
             />
-            <div>Принимаю <a href={terms.urlOffer} target="_blank" className="underline">офферту</a> сервиса и <a href={terms.urlPersonalData} target="_blank" className="underline">политику</a> персональных данных</div>
+            <div>Принимаю <a href={terms.urlOffer} target="_blank" className="underline text-primary">офферту</a> сервиса и <a href={terms.urlPersonalData} target="_blank" className="underline text-primary">политику</a> персональных данных</div>
         </div>
     );
 };
