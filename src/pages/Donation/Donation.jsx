@@ -19,7 +19,6 @@ import parse from "color-parse";
 
 const Donation = ({settings, userId, userName}) => {
 
-    const [isLoading, setIsLoading] = useState(false);
     const [paymentMethods, setPaymentMethods] = useState([]);
 
 
@@ -42,7 +41,6 @@ const Donation = ({settings, userId, userName}) => {
         handleSubmit,
         watch,
         setValue,
-        getValues,
         setError,
         clearErrors,
         formState: {errors},
@@ -94,11 +92,10 @@ const Donation = ({settings, userId, userName}) => {
         )
     }
 
-    console.log(errors);
     return (
         <>
 
-            <HeaderPanel>
+            <HeaderPanel colors={colors}>
                 <DonationHeader settings={settings}/>
             </HeaderPanel>
             <ContentPanel>

@@ -31,7 +31,6 @@ const App = () => {
         setIsLoading(true);
         try {
             const data = await fetchIdentity(groupId);
-            console.log(data)
             const processedData = extractDonationSettings(data);
             setSettings(processedData);
         } catch (err) {

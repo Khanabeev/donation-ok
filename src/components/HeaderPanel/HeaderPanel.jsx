@@ -3,9 +3,13 @@ import PropTypes from "prop-types";
 import styles from "./HeaderPanel.module.css";
 
 
-const HeaderPanel = ({children}) => {
+const HeaderPanel = ({children, colors = {}}) => {
     return (
-        <div className={styles.wrapper__header}>
+        <div className={styles.wrapper__header}
+        style={{
+            backgroundColor: colors.primary,
+            color: colors.textColor,
+        }}>
             <div className={styles.header}>
                 {children}
             </div>
@@ -15,6 +19,7 @@ const HeaderPanel = ({children}) => {
 
 HeaderPanel.propTypes = {
     children: PropTypes.node.isRequired,
+    colors: PropTypes.object,
 }
 
 export default HeaderPanel;

@@ -128,7 +128,7 @@ const HeartCheckbox = ({ isChecked, handleToggle, label, colors }) => {
                         </div>
                     </div>
                 ) : (
-                    <div className="flex items-center justify-center rounded-full bg-base-200 text-base-300 w-12 h-12">
+                    <div className="flex items-center justify-center rounded-full bg-base-100 text-base-300 w-12 h-12">
                         <FaRegHeart
                             className="text-xl hover:scale-110 transition-transform "
                         />
