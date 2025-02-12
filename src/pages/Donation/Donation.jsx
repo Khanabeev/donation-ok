@@ -15,6 +15,7 @@ import {useEffect, useState} from "react";
 import Loader from "@/components/Loader/Loader.jsx";
 import CommentInput from "@/components/CommentInput/CommentInput.jsx";
 import AcceptTerms from "@/components/AcceptTerms/AcceptTerms.jsx";
+import parse from "color-parse";
 
 const Donation = ({settings, userId, userName}) => {
 
@@ -23,6 +24,14 @@ const Donation = ({settings, userId, userName}) => {
 
 
     const {min, max} = settings.formSettings.sum;
+    const {backColor, color} = settings.formSettings.button.style;
+    const parsedColor = parse(backColor);
+    const colors = {
+        primary: backColor ?? null,
+        textColor: color ?? null,
+        lightColor: `rgba(${parsedColor.values[0]}, ${parsedColor.values[1]}, ${parsedColor.values[2]}, 0.1)`,
+    }
+
     const schema = createSchema({
         min,
         max
@@ -54,6 +63,8 @@ const Donation = ({settings, userId, userName}) => {
         setPaymentMethods(settings.formSettings?.payType?.default || ["card", "mir_pay"]);
     }, [])
 
+    const isTermsAccepted = watch('is_terms_accepted');
+
     const onDonate = (values) => {
 
         const payload = {
@@ -83,7 +94,6 @@ const Donation = ({settings, userId, userName}) => {
         )
     }
 
-    console.log(getValues())
     return (
         <>
 
@@ -114,6 +124,7 @@ const Donation = ({settings, userId, userName}) => {
                                                     setError={setError}
                                                     clearErrors={clearErrors}
                                                     watch={watch}
+                                                    colors={colors}
                                                 />
                                             </div>)
 
@@ -143,6 +154,7 @@ const Donation = ({settings, userId, userName}) => {
                                                     availableMethods={paymentMethods}
                                                     register={register}
                                                     setValue={setValue}
+                                                    colors={colors}
                                                 />
                                             </div>
                                         )
@@ -153,6 +165,7 @@ const Donation = ({settings, userId, userName}) => {
                                                     text={settings.formSettings.repeat.text}
                                                     textAfter={settings.formSettings.repeat.textAfter}
                                                     settings={settings}
+                                                    colors={colors}
                                                     setValue={setValue}
                                                 />
                                             </div>
@@ -162,16 +175,17 @@ const Donation = ({settings, userId, userName}) => {
                         <div className="flex flex-col gap-1">
                             <PaymentButton
                                 type="submit"
-                                style={{
-                                    backgroundColor: settings.formSettings.button.style.backColor,
-                                    color: settings.formSettings.button.style.color,
-                                }}
+                                colors={colors}
                                 text={settings.formSettings.button.text}
+                                watch={watch}
+                                isDisabled={!isTermsAccepted}
                             />
+
                             <AcceptTerms
                                 register={register}
                                 setValue={setValue}
                                 settings={settings}
+                                colors={colors}
                             />
                         </div>
                     </div>

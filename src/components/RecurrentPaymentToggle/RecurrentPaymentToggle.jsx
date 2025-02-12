@@ -4,7 +4,7 @@ import Popover from "@/components/Popover/Popover.jsx";
 import {GoQuestion} from "react-icons/go";
 import React, {useEffect, useState} from "react";
 
-const RecurrentPaymentToggle = ({text, textAfter, settings, setValue}) => {
+const RecurrentPaymentToggle = ({text, textAfter, settings, setValue, colors}) => {
     const [isChecked, setIsChecked] = useState(false);
     const repeatSettings = settings.formSettings.repeat;
     const variant = repeatSettings.variant || 0;
@@ -25,9 +25,9 @@ const RecurrentPaymentToggle = ({text, textAfter, settings, setValue}) => {
                  onClick={handleToggle}>
                 <div className="text-4xl">
                     {isChecked ? (
-                        <FiCheckSquare className="text-primary"/>
+                        <FiCheckSquare style={{color:colors.primary}}/>
                     ) : (
-                        <FiSquare className="text-primary"/>
+                        <FiSquare style={{color:colors.primary}}/>
                     )}
 
                 </div>
@@ -49,6 +49,7 @@ RecurrentPaymentToggle.propTypes = {
     text: PropTypes.string,
     textAfter: PropTypes.string,
     settings: PropTypes.object.isRequired,
+    colors: PropTypes.object.isRequired,
     setValue: PropTypes.func.isRequired,
 };
 

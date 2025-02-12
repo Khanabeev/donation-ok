@@ -15,6 +15,7 @@
     "@hookform/resolvers": "^3.10.0",
     "axios": "^1.7.9",
     "classnames": "^2.5.1",
+    "color-parse": "^2.0.2",
     "jose": "^5.9.6",
     "prop-types": "^15.8.1",
     "query-string": "^9.1.1",

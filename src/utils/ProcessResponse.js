@@ -16,6 +16,7 @@
  * @property {Object} payType.default - Дефолтный метод оплаты.
  * @property {string} btnText - Текст кнопки.
  * @property {Object} btnStyle - Стили кнопки.
+ * @property {Object} titleStyle - Стили заголовка.
  */
 
 /**
@@ -80,9 +81,12 @@ export const extractDonationSettings = (data) => {
             text: fund_form.data.btnText,
             style: fund_form.data.btnStyle,
         },
+        title: {
+            style: fund_form.data.titleStyle,
+        },
         email: fund_form.data.fields.email,
         comment: fund_form.data.fields.comment,
-        terms:{
+        terms: {
             urlOffer: fund_form.data.urlOffer,
             urlPersonalData: fund_form.data.urlPersonalData,
         }

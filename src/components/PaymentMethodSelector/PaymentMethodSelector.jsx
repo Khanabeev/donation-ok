@@ -2,7 +2,7 @@ import {useEffect, useState} from "react";
 import cn from "classnames";
 import PropTypes from "prop-types";
 
-const PaymentMethodSelector = ({availableMethods, register, setValue}) => {
+const PaymentMethodSelector = ({availableMethods, register, setValue, colors}) => {
     const [selectedIndex, setSelectedIndex] = useState(null);
 
     const payment_type_card = 'card',
@@ -115,11 +115,13 @@ const PaymentMethodSelector = ({availableMethods, register, setValue}) => {
         if (paymentMethod) {
             return (<label
                 htmlFor={`method-${index}`}
+                style={{
+                    color: selectedIndex === index ? 'black' : '',
+                    borderColor: selectedIndex === index ? colors.primary : '',
+                    backgroundColor: selectedIndex === index ? colors.lightColor : '',
+                }}
                 className={cn(
                     "flex flex-col gap-2 items-center px-6 py-4 rounded-lg cursor-pointer border border-base-200 text-md whitespace-nowrap font-medium  bg-base-100 text-base-300 transition duration-300",
-                    {
-                        "bg-secondary text-primary border-1 border-primary": selectedIndex === index,
-                    }
                 )}>
                 {paymentMethod.html}
             </label>);
@@ -149,6 +151,7 @@ PaymentMethodSelector.propTypes = {
     availableMethods: PropTypes.array.isRequired,
     register: PropTypes.func.isRequired,
     setValue: PropTypes.func.isRequired,
+    colors: PropTypes.object.isRequired,
 };
 
 export default PaymentMethodSelector;

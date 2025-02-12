@@ -3,7 +3,7 @@ import cn from "classnames";
 import PropTypes from "prop-types";
 import Input from "@/components/Input/Input.jsx";
 
-const AmountSelector = ({register,min, max, badges, defaultBadge, setValue, errors, setError, clearErrors}) => {
+const AmountSelector = ({register,min, max, badges, defaultBadge, setValue, errors, setError, clearErrors, colors}) => {
     const [selectedIndex, setSelectedIndex] = useState(0);
     const [amounts, setAmounts] = useState([]);
 
@@ -72,11 +72,13 @@ const AmountSelector = ({register,min, max, badges, defaultBadge, setValue, erro
             {amounts.map((amount, index) => (
                 <div key={index} className="flex-1 basis-[calc(33.333%-0.8em)]">
                     <label
+                        style={{
+                            color: selectedIndex === index ? 'black' : '',
+                            borderColor: selectedIndex === index ? colors.primary : '',
+                            backgroundColor: selectedIndex === index ? colors.lightColor : '',
+                        }}
                         className={cn(
                             "flex items-center justify-center px-6 py-4 rounded-lg cursor-pointer border text-md whitespace-nowrap font-medium border-base-200 bg-base-100 text-base-300 transition duration-300",
-                            {
-                                "bg-secondary text-primary border-1 border-primary": selectedIndex === index,
-                            }
                         )}
                     >
                         <Input
@@ -118,6 +120,7 @@ AmountSelector.propTypes = {
     register: PropTypes.func.isRequired,
     clearErrors: PropTypes.func.isRequired,
     errors: PropTypes.object.isRequired,
+    colors: PropTypes.object.isRequired,
     setValue: PropTypes.func.isRequired,
     setError: PropTypes.func.isRequired,
     min: PropTypes.number.isRequired,
