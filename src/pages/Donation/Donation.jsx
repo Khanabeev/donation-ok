@@ -79,7 +79,7 @@ const Donation = ({settings, userId, userName}) => {
             "phone": "",
             "comment": values.comment,
             "sum": values.custom_amount || values.amount, // Выбранная сумма пожертвования
-            "repeat": values.is_reccurent ? '1' : '0',
+            "repeat": values.is_recurrent ? '1' : '0',
             "payment_method": values.payment_method, // Метод оплаты
         }
 
@@ -94,6 +94,7 @@ const Donation = ({settings, userId, userName}) => {
         )
     }
 
+    console.log(errors);
     return (
         <>
 
@@ -163,6 +164,7 @@ const Donation = ({settings, userId, userName}) => {
                                             <div key={key}>
                                                 <RecurrentPaymentToggle
                                                     text={settings.formSettings.repeat.text}
+                                                    textNo={settings.formSettings.repeat.textNo}
                                                     textAfter={settings.formSettings.repeat.textAfter}
                                                     settings={settings}
                                                     colors={colors}
