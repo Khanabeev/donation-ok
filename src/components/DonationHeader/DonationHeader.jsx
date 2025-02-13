@@ -7,7 +7,7 @@ const DonationHeader = ({settings}) => {
                 <img
                     src={settings.generalInfo.fundLogo}
                     alt={settings.generalInfo.fundName}
-                    className="rounded-full w-16 h-16"
+                    className="rounded-full max-w-20"
                 />
                 <div className="flex flex-col gap-1">
                     <div className="font-bold text-lg">Помощь&nbsp;{settings.generalInfo.fundName}</div>
