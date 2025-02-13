@@ -8,7 +8,9 @@ export const initFAPI = (onSuccess, onError) => {
         {
             api_server: "https://api.ok.ru/",
             api_connection: "https://connect.ok.ru/",
-            use_extlinks: true
+            use_extlinks: true,
+            app_key: import.meta.env.VITE_PUBLIC_KEY,
+            app_id: import.meta.env.VITE_APP_ID,
         },
         onSuccess,
         onError

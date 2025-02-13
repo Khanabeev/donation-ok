@@ -17,7 +17,7 @@ import CommentInput from "@/components/CommentInput/CommentInput.jsx";
 import AcceptTerms from "@/components/AcceptTerms/AcceptTerms.jsx";
 import parse from "color-parse";
 
-const Donation = ({settings, userId, userName}) => {
+const Donation = ({settings, userId, userName, groupId}) => {
 
     const [paymentMethods, setPaymentMethods] = useState([]);
 
@@ -58,7 +58,7 @@ const Donation = ({settings, userId, userName}) => {
     })
 
     useEffect(() => {
-        setPaymentMethods(settings.formSettings?.payType?.default || ["card", "mir_pay"]);
+        setPaymentMethods(settings.projectInfo.paymentMethods || ["card", "mir_pay"]);
     }, [])
 
     const isTermsAccepted = watch('is_terms_accepted');
@@ -71,7 +71,7 @@ const Donation = ({settings, userId, userName}) => {
             "utm_source": "ok",  //Источник трафика (UTM-метка).
             "utm_medium": "social", //Тип трафика (UTM-метка).
             "target_id": null, //Идентификатор адресного сбора (если есть).
-            "source_url": `https://ok.ru/app/${import.meta.env.VITE_APP_ID}#success`, //URL для перенаправления после успешного пожертвования.
+            "source_url": `https://ok.ru/group/${groupId}/app/${import.meta.env.VITE_APP_ID}#success`, //URL для перенаправления после успешного пожертвования.
             "name": userName,
             "email": values.email,
             "phone": "",
@@ -145,17 +145,7 @@ const Donation = ({settings, userId, userName}) => {
                                                 />
                                             </div>
                                         )
-                                    case 'payType':
-                                        return (
-                                            <div key={key}>
-                                                <PaymentMethodSelector
-                                                    availableMethods={paymentMethods}
-                                                    register={register}
-                                                    setValue={setValue}
-                                                    colors={colors}
-                                                />
-                                            </div>
-                                        )
+
                                     case 'repeat':
                                         return (
                                             <div key={key}>
@@ -171,12 +161,19 @@ const Donation = ({settings, userId, userName}) => {
                                         )
                                 }
                             })}
+                        <div>
+                            <PaymentMethodSelector
+                                availableMethods={paymentMethods}
+                                register={register}
+                                setValue={setValue}
+                                colors={colors}
+                            />
+                        </div>
                         <div className="flex flex-col gap-1">
                             <PaymentButton
                                 type="submit"
                                 colors={colors}
                                 text={settings.formSettings.button.text}
-                                watch={watch}
                                 isDisabled={!isTermsAccepted}
                             />
 
