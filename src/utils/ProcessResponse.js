@@ -95,6 +95,9 @@ export const extractDonationSettings = (data) => {
     // Информация о проекте
     const projectInfo = fund_form.clientData.project;
 
+    // Информация о компании
+    const companyInfo = fund_form.clientData.company
+
     // Информация о цели
     const targetInfo = {
         title: target_title,
@@ -112,6 +115,7 @@ export const extractDonationSettings = (data) => {
         generalInfo,
         formSettings,
         projectInfo,
+        companyInfo,
         targetInfo,
         userInfo,
     };

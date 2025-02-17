@@ -18,6 +18,7 @@ const App = () => {
     const [userId, setUserId] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [settings, setSettings] = useState({});
+    const [customArgs, setCustomArgs] = useState(null);
 
 
     const checkGroupRegistration = async (gid) => {
@@ -47,6 +48,7 @@ const App = () => {
         setGroupId(params.get("group_id"));
         setUserId(params.get("logged_user_id"))
         setUserName(params.get("user_name"))
+        setCustomArgs(params.get("custom_args")) //
         setIsLoading(false);
 
         checkGroupRegistration(params.get("group_id"))
@@ -91,6 +93,7 @@ const App = () => {
                     groupId={groupId}
                     userId={userId}
                     userName={userName}
+                    customArgs={customArgs}
                 />
             }/>
             <Route path="/success" element={<SuccessPayment/>}/>

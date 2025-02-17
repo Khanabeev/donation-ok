@@ -17,9 +17,11 @@ import CommentInput from "@/components/CommentInput/CommentInput.jsx";
 import AcceptTerms from "@/components/AcceptTerms/AcceptTerms.jsx";
 import parse from "color-parse";
 
-const Donation = ({settings, userId, userName, groupId}) => {
+const Donation = ({settings, userId, userName, groupId, customArgs}) => {
 
     const [paymentMethods, setPaymentMethods] = useState([]);
+    const [targetId, setTargetId] = useState(null);
+    const [isSuccess, setIsSuccess] = useState(false);
 
 
     const {min, max} = settings.formSettings.sum;
@@ -59,6 +61,18 @@ const Donation = ({settings, userId, userName, groupId}) => {
 
     useEffect(() => {
         setPaymentMethods(settings.projectInfo.paymentMethods || ["card", "mir_pay"]);
+
+        if (customArgs) {
+            const params = new URLSearchParams(customArgs);
+
+            if (params.has("target")) {
+                setTargetId(params.get("target"));
+            }
+
+            if (params.has("status")) {
+                setIsSuccess(params.get("status") === 'success');
+            }
+        }
     }, [])
 
     const isTermsAccepted = watch('is_terms_accepted');
@@ -70,8 +84,8 @@ const Donation = ({settings, userId, userName, groupId}) => {
             "project_id": settings.projectInfo.id, //Идентификатор проекта пожертвования. Приходит с бэка
             "utm_source": "ok",  //Источник трафика (UTM-метка).
             "utm_medium": "social", //Тип трафика (UTM-метка).
-            "target_id": null, //Идентификатор адресного сбора (если есть).
-            "source_url": `https://ok.ru/group/${groupId}/app/${import.meta.env.VITE_APP_ID}#success`, //URL для перенаправления после успешного пожертвования.
+            "target_id": targetId ?? (-1 * settings.companyInfo.id), //Идентификатор адресного сбора (если есть).
+            "source_url": `https://ok.ru/group/${groupId}/app/${import.meta.env.VITE_APP_ID}?status=success`, //URL для перенаправления после успешного пожертвования.
             "name": userName,
             "email": values.email,
             "phone": "",
@@ -196,6 +210,7 @@ Donation.propTypes = {
     groupId: PropTypes.string,
     userId: PropTypes.string,
     userName: PropTypes.string,
+    customArgs: PropTypes.string,
 }
 
 export default Donation;
