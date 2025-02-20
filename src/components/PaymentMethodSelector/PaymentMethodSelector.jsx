@@ -97,6 +97,9 @@ const PaymentMethodSelector = ({availableMethods, register, setValue, colors}) =
 
     // Устанавливаем дефолтный метод пожертвования при инициализации
     useEffect(() => {
+        if (availableMethods.length === 0) {
+            availableMethods.push(payment_type_card);
+        }
         const index = availableMethods.findIndex((method) => method === payment_type_card);
         if (index > -1) {
             setSelectedIndex(index);

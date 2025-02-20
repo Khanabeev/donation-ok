@@ -4,7 +4,7 @@ import Popover from "@/components/Popover/Popover.jsx";
 import {GoQuestion} from "react-icons/go";
 import React, {useEffect, useState} from "react";
 import cn from "classnames";
-import {FaHeart, FaRegHeart} from "react-icons/fa";
+import {FaCheck, FaHeart, FaRegHeart} from "react-icons/fa";
 
 
 const CustomRadio = ({ id, checked, onChange, label, colors }) => {
@@ -98,14 +98,15 @@ const HeartCheckbox = ({ isChecked, handleToggle, label, colors }) => {
                 {isChecked ? (
 
                     <div className="relative">
-                        <div className="flex items-center justify-center rounded-full w-12 h-12"
+                        <div className="flex items-center justify-center rounded-full w-12 h-12 relative"
                              style={{
                                  backgroundColor: colors.lightColor,
                                  color: colors.primary,
                              }}>
                             <FaHeart
-                                className="text-xl hover:scale-110 transition-transform "
+                                className="text-2xl hover:scale-110 transition-transform"
                             />
+                            <FaCheck className='text-white absolute w-2.5 left-5'/>
                         </div>
 
                         {/* Пульсирующий эффект */}
@@ -118,12 +119,13 @@ const HeartCheckbox = ({ isChecked, handleToggle, label, colors }) => {
                                 rounded-full
                             `}
                         >
-                            <div className="flex items-center justify-center rounded-full w-12 h-12"
+                            <div className="flex items-center justify-center rounded-full w-12 h-12 relative"
                                  style={{
                                      backgroundColor: colors.lightColor,
                                      color: colors.primary,
                                  }}>
                                 <FaHeart className="text-xl"/>
+
                             </div>
                         </div>
                     </div>
@@ -150,10 +152,12 @@ const HeartCheckbox = ({ isChecked, handleToggle, label, colors }) => {
     );
 }
 
-const RecurrentPaymentToggle = ({settings, setValue, colors}) => {
+const RecurrentPaymentToggle = ({settings, setValue, watch, colors, text, textNo, textAfter, textAfterRepeat, textAfterNoRepeat}) => {
     const [isChecked, setIsChecked] = useState(false);
     const repeatSettings = settings.formSettings.repeat;
     const variant = repeatSettings.variant || 0;
+
+    const isReccurent = watch('is_recurrent');
 
     useEffect(() => {
         setIsChecked(repeatSettings.default === 1 || false);
@@ -192,7 +196,12 @@ const RecurrentPaymentToggle = ({settings, setValue, colors}) => {
                             colors={colors}
                         />
                     </div>
-                    <p className="text-xs text-base-300">{repeatSettings.textAfter}</p>
+                    <p className="text-xs text-base-300 mb-2">{repeatSettings.textAfter}</p>
+                    {isReccurent ? (
+                        <p className="text-xs text-base-300">{repeatSettings.textAfterRepeat}</p>
+                    ) : (
+                        <p className="text-xs text-base-300">{repeatSettings.textAfterNoRepeat}</p>
+                    )}
                 </div>
             )}
 
@@ -205,7 +214,12 @@ const RecurrentPaymentToggle = ({settings, setValue, colors}) => {
                         label={repeatSettings.text}
                         colors={colors}
                     />
-                <p className="mt-2 text-xs text-base-300">{repeatSettings.textAfter}</p>
+                    <p className="text-xs text-base-300 mb-2">{repeatSettings.textAfter}</p>
+                    {isReccurent ? (
+                        <p className="text-xs text-base-300">{repeatSettings.textAfterRepeat}</p>
+                    ) : (
+                        <p className="text-xs text-base-300">{repeatSettings.textAfterNoRepeat}</p>
+                    )}
                 </div>
 
             )}
@@ -231,18 +245,31 @@ const RecurrentPaymentToggle = ({settings, setValue, colors}) => {
                             />
                         </div>
                     </div>
-                    <p className="text-xs text-base-300">{repeatSettings.textAfter}</p>
+                    <p className="text-xs text-base-300 mb-2">{repeatSettings.textAfter}</p>
+                    {isReccurent ? (
+                        <p className="text-xs text-base-300">{repeatSettings.textAfterRepeat}</p>
+                    ) : (
+                        <p className="text-xs text-base-300">{repeatSettings.textAfterNoRepeat}</p>
+                    )}
                 </div>
             )}
 
             {/* Heart variant-3 */}
             {variant === 3 && (
-                <HeartCheckbox
-                    isChecked={isChecked}
-                    handleToggle={handleToggle}
-                    label={repeatSettings.text}
-                    colors={colors}
-                />
+                <div>
+                    <HeartCheckbox
+                        isChecked={isChecked}
+                        handleToggle={handleToggle}
+                        label={repeatSettings.text}
+                        colors={colors}
+                    />
+                    <p className="text-xs text-base-300 mb-2">{repeatSettings.textAfter}</p>
+                    {isReccurent ? (
+                        <p className="text-xs text-base-300">{repeatSettings.textAfterRepeat}</p>
+                    ) : (
+                        <p className="text-xs text-base-300">{repeatSettings.textAfterNoRepeat}</p>
+                    )}
+                </div>
             )}
         </div>
 
@@ -253,6 +280,8 @@ RecurrentPaymentToggle.propTypes = {
     text: PropTypes.string,
     textNo: PropTypes.string,
     textAfter: PropTypes.string,
+    textAfterRepeat: PropTypes.string,
+    textAfterNoRepeat: PropTypes.string,
     settings: PropTypes.object.isRequired,
     colors: PropTypes.object.isRequired,
     setValue: PropTypes.func.isRequired,

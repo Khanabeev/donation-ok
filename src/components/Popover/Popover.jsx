@@ -16,8 +16,8 @@ const Popover = ({ trigger, content }) => {
 
             {/* Контент поповера */}
             {isHovered && (
-                <div className="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 bg-white border border-gray-200 shadow-lg rounded-md p-4 z-10">
-                    <p className="text-gray-700 text-sm">{content}</p>
+                <div className="absolute mb-2 left-1/2 transform -translate-x-1/2 bg-white border border-gray-200 shadow-lg rounded-md p-4 z-10">
+                    <p className="text-gray-700 text-xs">{content}</p>
                 </div>
             )}
         </div>

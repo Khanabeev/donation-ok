@@ -3,8 +3,8 @@ import cn from "classnames";
 
 const ContentPanel = ({children, hasBackground = true}) => {
 
-    const classes = cn("absolute top-[-40px] px-6", {
-        "bg-white rounded-t-3xl pt-6": hasBackground,
+    const classes = cn("px-6", {
+        "bg-white pt-6": hasBackground,
     })
 
     return (

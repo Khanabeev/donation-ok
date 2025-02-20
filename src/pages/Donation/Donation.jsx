@@ -93,6 +93,7 @@ const Donation = ({settings, userId, userName, groupId, customArgs}) => {
             "sum": values.custom_amount || values.amount, // Выбранная сумма пожертвования
             "repeat": values.is_recurrent ? '1' : '0',
             "payment_method": values.payment_method, // Метод оплаты
+            "user_fundraising_product": 'ok'
         }
 
         generateToken(payload, 'vk').then((token) => {
@@ -109,9 +110,9 @@ const Donation = ({settings, userId, userName, groupId, customArgs}) => {
     return (
         <>
 
-            <HeaderPanel colors={colors}>
-                <DonationHeader settings={settings}/>
-            </HeaderPanel>
+            {/*<HeaderPanel colors={colors}>*/}
+            {/*    <DonationHeader settings={settings}/>*/}
+            {/*</HeaderPanel>*/}
             <ContentPanel>
                 <form onSubmit={handleSubmit(onDonate)}>
                     <div className="flex flex-col gap-4">
@@ -167,9 +168,12 @@ const Donation = ({settings, userId, userName, groupId, customArgs}) => {
                                                     text={settings.formSettings.repeat.text}
                                                     textNo={settings.formSettings.repeat.textNo}
                                                     textAfter={settings.formSettings.repeat.textAfter}
+                                                    textAfterRepeat={settings.formSettings.repeat.textAfterRepeat}
+                                                    textAfterNoRepeat={settings.formSettings.repeat.textAfterNoRepeat}
                                                     settings={settings}
                                                     colors={colors}
                                                     setValue={setValue}
+                                                    watch={watch}
                                                 />
                                             </div>
                                         )
