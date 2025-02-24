@@ -91,7 +91,7 @@ const Donation = ({settings, userId, userName, groupId, customArgs}) => {
             "phone": "",
             "comment": values.comment,
             "sum": values.custom_amount || values.amount, // Выбранная сумма пожертвования
-            "repeat": values.is_recurrent ? '1' : '0',
+            "recurrent_payment": values.is_recurrent ? '1' : '0',
             "payment_method": values.payment_method, // Метод оплаты
             "user_fundraising_product": 'ok'
         }
