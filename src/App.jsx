@@ -9,6 +9,7 @@ import SuccessPayment from "@/pages/SuccessPayment/SuccessPayment.jsx";
 import {fetchIdentity} from "@/api/backend.js";
 import {extractDonationSettings} from "@/utils/ProcessResponse.js";
 import Loader from "@/components/Loader/Loader.jsx";
+import bridge from "@vkontakte/vk-bridge";
 
 const App = () => {
     const [isAdminOfGroup, setIsAdminOfGroup] = useState(false);
@@ -19,6 +20,7 @@ const App = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [settings, setSettings] = useState({});
     const [customArgs, setCustomArgs] = useState(null);
+    const [isRunFromGroup, setIsRunFromGroup] = useState(false);
 
 
     const checkGroupRegistration = async (gid) => {
@@ -42,31 +44,29 @@ const App = () => {
     };
 
     const onSuccess = () => {
-        console.log("FAPI инициализирован");
         const params = new URLSearchParams(window.location.search);
-        setIsAdminOfGroup(params.get("viewer_type") === "ADMIN");
-        setGroupId(params.get("group_id"));
-        setUserId(params.get("logged_user_id"))
-        setUserName(params.get("user_name"))
+        params.forEach((param, key) => {
+            console.log(key, '=', param);
+        })
+
+        setIsAdminOfGroup(params.get("vk_viewer_group_role") === "admin");
+        setGroupId(params.get("vk_group_id"));
+        setUserId(params.get("vk_user_id"))
         setCustomArgs(params.get("custom_args")) //
+        console.log(customArgs)
         setIsLoading(false);
 
-        checkGroupRegistration(params.get("group_id"))
+        checkGroupRegistration(params.get("vk_group_id"))
             .then(isRegistered => {
                 setIsGroupRegistered(isRegistered);
             });
 
-        loadSettings(params.get("group_id"));
-    };
-
-    const onError = (error) => {
-        console.error("Ошибка инициализации FAPI:", error);
-        setIsLoading(false);
+        loadSettings(params.get("vk_group_id"));
     };
 
     useEffect(() => {
         setIsLoading(true);
-        initFAPI(onSuccess, onError);
+        onSuccess();
     }, []);
 
     if (isLoading) {

@@ -3,6 +3,9 @@ import {StrictMode} from 'react'
 import App from './App.jsx'
 import {BrowserRouter} from "react-router";
 import "./index.css";
+import bridge from '@vkontakte/vk-bridge';
+
+bridge.send("VKWebAppInit")
 
 const root = createRoot(document.getElementById('root'));
 root.render(
