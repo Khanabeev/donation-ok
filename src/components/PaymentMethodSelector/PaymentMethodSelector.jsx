@@ -138,7 +138,6 @@ const PaymentMethodSelector = ({availableMethods, register, setValue, colors}) =
                     <input
                         {...register('payment_method')}
                         id={`method-${index}`}
-                        className="hidden"
                         type="radio"
                         name="paymentMethod"
                         onChange={() => handleSelect(index, method)}

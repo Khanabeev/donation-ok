@@ -107,7 +107,6 @@ const Donation = ({settings, userId, userName, groupId, customArgs}) => {
         )
     }
 
-    console.log('sum')
     return (
         <>
 
