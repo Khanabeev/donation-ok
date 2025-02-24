@@ -45,15 +45,10 @@ const App = () => {
 
     const onSuccess = () => {
         const params = new URLSearchParams(window.location.search);
-        params.forEach((param, key) => {
-            console.log(key, '=', param);
-        })
-
         setIsAdminOfGroup(params.get("vk_viewer_group_role") === "admin");
         setGroupId(params.get("vk_group_id"));
         setUserId(params.get("vk_user_id"))
         setCustomArgs(params.get("custom_args")) //
-        console.log(customArgs)
         setIsLoading(false);
 
         checkGroupRegistration(params.get("vk_group_id"))
