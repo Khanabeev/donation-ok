@@ -19,7 +19,7 @@ import parse from "color-parse";
 
 const Donation = ({settings, userId, userName, groupId, customArgs}) => {
 
-    const [paymentMethods, setPaymentMethods] = useState(["card", "mir_pay"]);
+    const [paymentMethods, setPaymentMethods] = useState(["card"]);
     const [targetId, setTargetId] = useState(null);
     const [isSuccess, setIsSuccess] = useState(false);
 
