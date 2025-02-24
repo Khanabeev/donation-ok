@@ -19,7 +19,7 @@ import parse from "color-parse";
 
 const Donation = ({settings, userId, userName, groupId, customArgs}) => {
 
-    const [paymentMethods, setPaymentMethods] = useState([]);
+    const [paymentMethods, setPaymentMethods] = useState(["card", "mir_pay"]);
     const [targetId, setTargetId] = useState(null);
     const [isSuccess, setIsSuccess] = useState(false);
 
@@ -60,7 +60,9 @@ const Donation = ({settings, userId, userName, groupId, customArgs}) => {
     })
 
     useEffect(() => {
-        setPaymentMethods(settings.projectInfo.paymentMethods || ["card", "mir_pay"]);
+        if (settings.projectInfo.paymentMethods.length > 0) {
+            setPaymentMethods(settings.projectInfo.paymentMethods);
+        }
 
         if (customArgs) {
             const params = new URLSearchParams(customArgs);
