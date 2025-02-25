@@ -21,7 +21,7 @@ const App = () => {
     const [settings, setSettings] = useState({});
     const [customArgs, setCustomArgs] = useState(null);
     const [isRunFromGroup, setIsRunFromGroup] = useState(false);
-
+    const [hashArg, setHashArg] = useState("");
 
     const checkGroupRegistration = async (gid) => {
         return await fetchIdentity(gid)
@@ -45,6 +45,11 @@ const App = () => {
 
     const onSuccess = () => {
         const params = new URLSearchParams(window.location.search);
+        bridge.subscribe((e) => {
+            if (e.detail.type === 'VKWebAppLocationChanged') {
+                setHashArg(e.detail.data.location);
+            }
+        });
         setIsAdminOfGroup(params.get("vk_viewer_group_role") === "admin");
         setGroupId(params.get("vk_group_id"));
         setUserId(params.get("vk_user_id"))
