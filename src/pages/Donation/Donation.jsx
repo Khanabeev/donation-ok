@@ -11,32 +11,59 @@ import PaymentButton from "@/components/PaymentButton/PaymentButton.jsx";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {createSchema} from "@/schemas/donation.js";
-import {useEffect, useState} from "react";
+import {useEffect, useState, useMemo, useContext} from "react";
 import Loader from "@/components/Loader/Loader.jsx";
 import CommentInput from "@/components/CommentInput/CommentInput.jsx";
 import AcceptTerms from "@/components/AcceptTerms/AcceptTerms.jsx";
 import parse from "color-parse";
+import {fetchIdentity} from "@/api/backend.js";
+import {extractDonationSettings} from "@/utils/ProcessResponse.js";
+import {AppContext} from "@/context/AppContext.jsx";
 
-const Donation = ({settings, userId, userName, groupId, customArgs}) => {
+const Donation = () => {
+    const {
+        isLoading,
+        setIsLoading,
+        groupId,
+        userName,
+        userId
+    } = useContext(AppContext);
+
 
     const [paymentMethods, setPaymentMethods] = useState(["card"]);
     const [targetId, setTargetId] = useState(null);
-    const [isSuccess, setIsSuccess] = useState(false);
+    const [settings, setSettings] = useState(null);
 
+    // Вычисляем цвета и другие производные данные только после загрузки settings
+    const colors = useMemo(() => {
+        if (!settings?.formSettings?.button?.style) {
+            return {
+                primary: null,
+                textColor: null,
+                lightColor: null
+            };
+        }
 
-    const {min, max} = settings.formSettings.sum;
-    const {backColor, color} = settings.formSettings.button.style;
-    const parsedColor = parse(backColor);
-    const colors = {
-        primary: backColor ?? null,
-        textColor: color ?? null,
-        lightColor: `rgba(${parsedColor.values[0]}, ${parsedColor.values[1]}, ${parsedColor.values[2]}, 0.1)`,
-    }
+        const {backColor, color} = settings.formSettings.button.style;
+        const parsedColor = parse(backColor || '');
 
-    const schema = createSchema({
-        min,
-        max
-    })
+        return {
+            primary: backColor || null,
+            textColor: color || null,
+            lightColor: parsedColor?.values ?
+                `rgba(${parsedColor.values[0]}, ${parsedColor.values[1]}, ${parsedColor.values[2]}, 0.1)` :
+                null,
+        };
+    }, [settings]);
+
+    // Создаем схему валидации только после загрузки settings
+    const schema = useMemo(() => {
+        if (!settings?.formSettings?.sum) {
+            return createSchema({min: 0, max: 100000}); // дефолтные значения
+        }
+        const {min, max} = settings.formSettings.sum;
+        return createSchema({min, max});
+    }, [settings]);
 
     const {
         register,
@@ -46,6 +73,7 @@ const Donation = ({settings, userId, userName, groupId, customArgs}) => {
         setError,
         clearErrors,
         formState: {errors},
+        reset
     } = useForm({
         resolver: zodResolver(schema),
         defaultValues: {
@@ -57,74 +85,100 @@ const Donation = ({settings, userId, userName, groupId, customArgs}) => {
             is_terms_accepted: true,
             payment_method: "card",
         }
-    })
+    });
 
+    // Обработка параметров URL
+    // useEffect(() => {
+    //     if (customArgs) {
+    //         const params = new URLSearchParams(customArgs);
+    //
+    //         if (params.has("target")) {
+    //             setTargetId(params.get("target"));
+    //         }
+    //
+    //         if (params.has("status")) {
+    //             setIsSuccess(params.get("status") === 'success');
+    //         }
+    //     }
+    // }, [customArgs]);
+
+    // Загрузка настроек
     useEffect(() => {
-        if(settings.projectInfo.paymentMethods.length > 0) {
-            setPaymentMethods(settings.projectInfo.paymentMethods);
-        }
+        const loadSettings = async () => {
+            if (!groupId) return;
 
+            setIsLoading(true);
+            try {
+                const data = await fetchIdentity(groupId);
+                const processedData = extractDonationSettings(data);
+                setSettings(processedData);
 
-        if (customArgs) {
-            const params = new URLSearchParams(customArgs);
+                // Установка методов оплаты
+                if (processedData?.projectInfo?.paymentMethods?.length > 0) {
+                    setPaymentMethods(processedData.projectInfo.paymentMethods);
+                }
 
-            if (params.has("target")) {
-                setTargetId(params.get("target"));
+                // Установка значений формы на основе полученных данных
+                if (processedData?.formSettings?.sum?.default) {
+                    setValue('amount', processedData.formSettings.sum.default);
+                }
+            } catch (err) {
+                console.error("Ошибка загрузки данных:", err);
+            } finally {
+                setIsLoading(false);
             }
+        };
 
-            if (params.has("status")) {
-                setIsSuccess(params.get("status") === 'success');
-            }
-        }
-    }, [])
+        loadSettings();
+    }, [groupId, setValue]);
 
     const isTermsAccepted = watch('is_terms_accepted');
 
     const onDonate = (values) => {
+        if (!settings) return;
 
         const payload = {
-            "uid": userId, // id пользователя
-            "project_id": settings.projectInfo.id, //Идентификатор проекта пожертвования. Приходит с бэка
-            "utm_source": "ok",  //Источник трафика (UTM-метка).
-            "utm_medium": "social", //Тип трафика (UTM-метка).
-            "target_id": targetId ?? (-1 * settings.companyInfo.id), //Идентификатор адресного сбора (если есть).
-            "source_url": `https://ok.ru/group/${groupId}/app/${import.meta.env.VITE_APP_ID}?status=success`, //URL для перенаправления после успешного пожертвования.
+            "uid": userId,
+            "project_id": settings.projectInfo.id,
+            "utm_source": "ok",
+            "utm_medium": "social",
+            "target_id": targetId ?? (-1 * settings.companyInfo.id),
+            "source_url": `https://ok.ru/group/${groupId}/app/${import.meta.env.VITE_APP_ID}?status=success`,
             "name": userName,
             "email": values.email,
             "phone": "",
             "comment": values.comment,
-            "sum": values.custom_amount || values.amount, // Выбранная сумма пожертвования
+            "sum": values.custom_amount || values.amount,
             "recurrent_payment": values.is_recurrent ? '1' : '0',
-            "payment_method": values.payment_method, // Метод оплаты
+            "payment_method": values.payment_method,
             "user_fundraising_product": 'ok'
-        }
+        };
 
         generateToken(payload, 'vk').then((token) => {
             window.location.assign(settings.generalInfo.landingUrl + "?source=ok&jwt=" + token);
         });
-    }
+    };
 
-    if (!settings) {
-        return (
-            <Loader/>
-        )
+    // Показываем загрузчик, пока данные не готовы
+    if (isLoading || !settings) {
+        return <Loader/>;
     }
 
     return (
         <>
+            {/* Если нужен заголовок, раскомментируйте */}
+            {/* <HeaderPanel colors={colors}>
+                <DonationHeader settings={settings} />
+            </HeaderPanel> */}
 
-            {/*<HeaderPanel colors={colors}>*/}
-            {/*    <DonationHeader settings={settings}/>*/}
-            {/*</HeaderPanel>*/}
             <ContentPanel>
                 <form onSubmit={handleSubmit(onDonate)}>
                     <div className="flex flex-col gap-4">
-                        {Object.entries(settings.formSettings)
-                            .filter(([, value]) => value?.state > 0)  // только активные
-                            .sort(([, a], [, b]) => a.order - b.order)  // сортировка по order
+                        {settings && Object.entries(settings.formSettings)
+                            .filter(([, value]) => value?.state > 0)
+                            .sort(([, a], [, b]) => a.order - b.order)
                             .map(([key]) => {
                                 switch (key) {
-
                                     case 'sum':
                                         return (
                                             <div key={key}>
@@ -132,8 +186,8 @@ const Donation = ({settings, userId, userName, groupId, customArgs}) => {
                                                 <AmountSelector
                                                     badges={settings.formSettings.sum.badges.map((item) => item.value ?? null) || []}
                                                     defaultBadge={settings.formSettings.sum.default || 10}
-                                                    min={min}
-                                                    max={max}
+                                                    min={settings.formSettings.sum.min}
+                                                    max={settings.formSettings.sum.max}
                                                     register={register}
                                                     errors={errors}
                                                     setValue={setValue}
@@ -142,7 +196,8 @@ const Donation = ({settings, userId, userName, groupId, customArgs}) => {
                                                     watch={watch}
                                                     colors={colors}
                                                 />
-                                            </div>)
+                                            </div>
+                                        );
 
                                     case 'email':
                                         return (
@@ -152,7 +207,8 @@ const Donation = ({settings, userId, userName, groupId, customArgs}) => {
                                                     errors={errors}
                                                 />
                                             </div>
-                                        )
+                                        );
+
                                     case 'comment':
                                         return (
                                             <div key={key}>
@@ -162,7 +218,7 @@ const Donation = ({settings, userId, userName, groupId, customArgs}) => {
                                                     settings={settings}
                                                 />
                                             </div>
-                                        )
+                                        );
 
                                     case 'repeat':
                                         return (
@@ -179,9 +235,13 @@ const Donation = ({settings, userId, userName, groupId, customArgs}) => {
                                                     watch={watch}
                                                 />
                                             </div>
-                                        )
+                                        );
+
+                                    default:
+                                        return null;
                                 }
                             })}
+
                         <div>
                             <PaymentMethodSelector
                                 availableMethods={paymentMethods}
@@ -190,6 +250,7 @@ const Donation = ({settings, userId, userName, groupId, customArgs}) => {
                                 colors={colors}
                             />
                         </div>
+
                         <div className="flex flex-col gap-1">
                             <PaymentButton
                                 type="submit"
@@ -213,11 +274,10 @@ const Donation = ({settings, userId, userName, groupId, customArgs}) => {
 };
 
 Donation.propTypes = {
-    settings: PropTypes.object.isRequired,
     groupId: PropTypes.string,
     userId: PropTypes.string,
     userName: PropTypes.string,
     customArgs: PropTypes.string,
-}
+};
 
 export default Donation;
