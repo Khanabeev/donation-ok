@@ -12,26 +12,22 @@ const ProtectedRoute = () => {
         return <Loader/>;
     }
 
-    // Если это администратор и он уже зарегистрировал группу
-    if (isAdminOfGroup && isGroupRegistered) {
+    // Если это внутри группы и он уже зарегистрирована группа в МП
+    if (groupId && isGroupRegistered) {
         return <Navigate to="/donate" replace/>;
     }
 
-    // Если пользователь не администратор и он открывает изнутри группы, перенаправляем
-    if (!isAdminOfGroup && groupId) {
-        return <Navigate to="/donate" replace/>;
-    }
-
-    // Если группа не зарегистрирована и открывает обычный пользователь, перенаправляем на страницу "not-registered"
-    if (!isAdminOfGroup && !isGroupRegistered && groupId) {
+    // Если внутри группы и не администратор открывает не зарегистрированную
+    if (groupId && !isAdminOfGroup && !isGroupRegistered ) {
         return <Navigate to="/not-registered" replace/>;
     }
 
+    // Приложение открыто вне группы
     if (!groupId) {
         return <Navigate to="/install" replace/>;
     }
 
-    // Если все проверки пройдены, отображаем содержимое защищенного маршрута
+    // Если все проверки пройдены, отображается содержимое Welcome страницы для регистрации
     return <Outlet/>;
 };
 

@@ -1,16 +1,22 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import {BrowserView, MobileView} from "react-device-detect";
+import InstallDesktop from "@/pages/Install/InstallDesktop.jsx";
+import InstallMobile from "@/pages/Install/InstallMobile.jsx";
 
 const Install = () => {
     return (
-        <div>
-            Install page
-        </div>
+        <>
+            <BrowserView>
+                <InstallDesktop/>
+            </BrowserView>
+            <MobileView>
+                <InstallMobile/>
+            </MobileView>
+
+        </>
     );
 };
 
-Install.propTypes = {
-
-};
+Install.propTypes = {};
 
 export default Install;
