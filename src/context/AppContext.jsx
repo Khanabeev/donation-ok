@@ -13,49 +13,45 @@ export const AppProvider = ({children}) => {
     const [userName, setUserName] = useState(null);
 
     useEffect(() => {
-        // Считываем параметры один раз при монтировании
-        const params = new URLSearchParams(window.location.search);
-        params.forEach((param, key) => {
-            console.log(key, '=', param);
-        })
-        const groupRole = params.get("vk_viewer_group_role");
-        const gid = params.get("vk_group_id");
-        const uid = params.get("vk_user_id");
+        async function init() {
+            // Считываем параметры
+            const params = new URLSearchParams(window.location.search);
+            const groupRole = params.get("vk_viewer_group_role");
+            const gid = params.get("vk_group_id");
+            const uid = params.get("vk_user_id");
 
-        setGroupId(gid);
-        setUserId(uid);
-        setIsAdminOfGroup(groupRole === "admin");
+            setGroupId(gid);
+            setUserId(uid);
+            setIsAdminOfGroup(groupRole === "admin");
 
-        // Проверка регистрации
-        async function checkGroup() {
-            if (!gid) {
-                setIsLoading(false);
-                return;
-            }
+            // Асинхронные проверки
             try {
-                await fetchIdentity(gid);
-                setIsGroupRegistered(true);
-            } catch (err) {
+                // Если есть gid, проверяем регистрацию группы
+                if (gid) {
+                    await fetchIdentity(gid);
+                    setIsGroupRegistered(true);
+                }
+                // eslint-disable-next-line no-unused-vars
+            } catch (error) {
                 setIsGroupRegistered(false);
             }
-            setIsLoading(false);
-        }
 
-        async function getUserInfo(uid) {
-            bridge.send('VKWebAppGetUserInfo', {
-                user_id: uid
-            })
-                .then(res => {
+            // Получаем информацию о пользователе (если есть uid)
+            if (uid) {
+                try {
+                    const res = await bridge.send('VKWebAppGetUserInfo', { user_id: uid });
                     setUserName(res.first_name + " " + res.last_name);
-                })
-                .catch(err => {
-                    setUserName(null)
-                })
+                    // eslint-disable-next-line no-unused-vars
+                } catch (error) {
+                    setUserName(null);
+                }
+            }
+
+            // Все проверки завершены => убираем лоадер
             setIsLoading(false);
         }
 
-        checkGroup();
-        getUserInfo(uid);
+        init();
     }, []);
 
     const value = {
