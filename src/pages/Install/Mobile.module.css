@@ -1,0 +1,138 @@
+/* .screen {
+  background: linear-gradient(180deg, #FFFADE 0%, #FFF1E7 100%);
+  Закомментировано в исходнике SCSS
+*/
+.screen {
+  height: auto;
+  min-height: 100vh;
+  padding-top: 80px;
+  margin-bottom: -50px;
+}
+
+@media only screen and (min-width: 630px) {
+  .screen {
+    margin-top: 0;
+  }
+}
+
+.appHeader {
+  margin-top: 0;
+}
+
+@media only screen and (min-width: 630px) {
+  .appHeader {
+    margin-top: -10px;
+  }
+}
+
+.logo {
+  height: 62px;
+}
+
+.logo img {
+  width: 62px;
+  height: 62px;
+  margin: 0 auto;
+}
+
+.p {
+  font-family: 'Manrope', sans-serif;
+  font-size: 14px;
+  color: #222222;
+}
+
+.center {
+  text-align: center;
+}
+
+.app {
+  margin-top: 10px;
+}
+
+.appName {
+  font-size: 18px;
+  margin-top: 2px;
+  color: #222222;
+}
+
+/* Слайдер */
+.slider .sliderImage {
+  z-index: 2;
+  text-align: center;
+  height: 43vh;
+  overflow: hidden;
+}
+
+.slider .sliderImage img {
+  width: 60%;
+  margin: 0 auto;
+  z-index: 2;
+  display: inline-block;
+}
+
+@media only screen and (min-width: 630px) {
+  .slider .sliderImage img {
+    width: 30%;
+  }
+}
+
+.slider .sliderDescription {
+  position: relative;
+  z-index: 9999;
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  width: 85%;
+  margin: 0 auto;
+  margin-top: -35px;
+  text-align: center;
+}
+
+.slider .sliderDescription span {
+  font-weight: 500;
+  font-size: 14px;
+  color: #222222;
+}
+
+/* Установка */
+.install {
+  margin-top: 40px;
+  text-align: center;
+}
+
+@media only screen and (min-width: 630px) {
+  .install {
+    margin-top: 30px;
+  }
+}
+
+.install .button {
+  background: linear-gradient(90deg, #FFB607 0%, #FF9900 100%);
+  border-radius: 40px;
+  width: calc(100% - 60px);
+  font-family: 'Manrope', sans-serif;
+  font-size: 18px;
+  height: 44px;
+  color: white;
+  margin: 0 auto;
+  line-height: 15px;
+  display: inherit;
+}
+
+@media only screen and (min-width: 630px) {
+  .install .button {
+    width: max-content;
+    padding-left: 60px;
+    padding-right: 60px;
+  }
+}
+
+.install .button .icon,
+.install .button span {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.install .button span {
+  margin-left: 12px;
+}

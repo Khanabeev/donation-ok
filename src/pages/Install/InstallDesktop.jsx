@@ -39,7 +39,7 @@ const InstallDesktop = () => {
     return (
         <div className={styles.screen}>
             <div className="flex gap-8">
-                <div className={`w-full w-1/2 ${styles.slider}`}>
+                <div className={`w-1/2 ${styles.slider}`}>
                     <Slider ref={(s) => (slider = s)} {...settings}>
                         {images.map((image, index) => (
                             <div key={index}>
@@ -51,12 +51,12 @@ const InstallDesktop = () => {
                     </Slider>
                 </div>
 
-                <div className="w-full w-1/2 mr-8">
+                <div className="w-1/2 mr-8">
                     <div className={`flex gap-1 ${styles.head}`}>
-                        <div className={`w-full w-1/4 ${styles.logo}`}>
+                        <div className={`w-1/4 ${styles.logo}`}>
                             <img src="/img/logo.png" alt="app" />
                         </div>
-                        <div className="w-full w-3/4">
+                        <div className="w-3/4">
                             <div className="flex flex-wrap gap-4">
                                 <div className={`w-full ${styles.left}`}>
                                     <p className={styles.p}>приложение</p>
