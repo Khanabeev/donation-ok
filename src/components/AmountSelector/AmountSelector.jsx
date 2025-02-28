@@ -58,7 +58,7 @@ const AmountSelector = ({register,min, max, badges, defaultBadge, setValue, erro
         if (value > max) {
             setError("custom_amount", {
                 type: "max",
-                message: `Введите сумму не больше ${max} ₽`
+                message: `Введите сумму до ${max} ₽`
             }, {shouldFocus: true})
             setValue("custom_amount", max)
             return;
@@ -68,9 +68,12 @@ const AmountSelector = ({register,min, max, badges, defaultBadge, setValue, erro
     }
 
     return (
-        <div className="flex flex-wrap gap-[0.8em] w-full">
+        <div className="flex flex-wrap gap-[0.8em]">
             {amounts.map((amount, index) => (
-                <div key={index} className="flex-1 basis-[calc(33.333%-0.8em)]">
+                <div key={index} className={cn("basis-0 grow min-w-[100px]", {
+                    "min-w-[130px]": amounts.length > 3,
+                    "min-w-[110px]": amounts.length > 4,
+                    })}>
                     <label
                         style={{
                             color: selectedIndex === index ? 'black' : '',
@@ -93,7 +96,7 @@ const AmountSelector = ({register,min, max, badges, defaultBadge, setValue, erro
                     </label>
                 </div>
             ))}
-            <div className="relative flex-1 basis-full">
+            <div className="relative flex basis-0 grow min-w-[165px]">
                 <Input
                     {...register("custom_amount")}
                     type="number"
@@ -107,7 +110,7 @@ const AmountSelector = ({register,min, max, badges, defaultBadge, setValue, erro
                         })}
                 />
                 {errors.custom_amount && (<div
-                    className="text-sm text-white bg-error absolute top-[-10px] px-1">{errors.custom_amount.message}</div>)}
+                    className="text-xs text-white bg-error absolute top-[-10px] px-1">{errors.custom_amount.message}</div>)}
             </div>
         </div>
     );

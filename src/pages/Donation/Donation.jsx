@@ -19,6 +19,7 @@ import parse from "color-parse";
 import {fetchIdentity} from "@/api/backend.js";
 import {extractDonationSettings} from "@/utils/ProcessResponse.js";
 import {AppContext} from "@/context/AppContext.jsx";
+import DonationContentPanel from "@/components/ContentPanel/DonationContentPanel.jsx";
 
 const Donation = () => {
     const {
@@ -167,11 +168,11 @@ const Donation = () => {
     return (
         <>
             {/* Если нужен заголовок, раскомментируйте */}
-            {/* <HeaderPanel colors={colors}>
+            <HeaderPanel colors={colors}>
                 <DonationHeader settings={settings} />
-            </HeaderPanel> */}
+            </HeaderPanel>
 
-            <ContentPanel>
+            <DonationContentPanel>
                 <form onSubmit={handleSubmit(onDonate)}>
                     <div className="flex flex-col gap-4">
                         {settings && Object.entries(settings.formSettings)
@@ -268,7 +269,7 @@ const Donation = () => {
                         </div>
                     </div>
                 </form>
-            </ContentPanel>
+            </DonationContentPanel>
         </>
     );
 };

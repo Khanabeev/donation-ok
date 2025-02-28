@@ -11,6 +11,7 @@ export const AppProvider = ({children}) => {
     const [userId, setUserId] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [userName, setUserName] = useState(null);
+    const [colorTheme, setColorTheme] = useState(null);
 
     useEffect(() => {
         async function init() {
@@ -47,6 +48,16 @@ export const AppProvider = ({children}) => {
                 }
             }
 
+            try {
+                await bridge.send('VKWebAppUpdateConfig', {keys: ['appearance']})
+                    .then(config => {
+                        setColorTheme(config?.appearance ?? 'light');
+                    })
+                    .catch(err => console.error(err))
+            } catch (error) {
+                console.error(error);
+            }
+
             // Все проверки завершены => убираем лоадер
             setIsLoading(false);
         }
@@ -62,6 +73,7 @@ export const AppProvider = ({children}) => {
         isLoading,
         setIsLoading,
         userName,
+        colorTheme,
     };
 
     return (

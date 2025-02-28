@@ -1,4 +1,4 @@
-import {Routes, Route, BrowserRouter} from "react-router";
+import {Routes, Route, HashRouter} from "react-router";
 import Donation from "./pages/Donation/Donation.jsx";
 import Welcome from "./pages/Welcome/Welcome.jsx";
 import Settings from "./pages/Settings/Settings.jsx";
@@ -11,7 +11,7 @@ const App = () => {
 
     return (
         <AppProvider>
-            <BrowserRouter>
+            <HashRouter>
                 <Routes>
                     <Route element={<ProtectedRoute/>}>
                         <Route index path="/" element={<Welcome/>}/>
@@ -22,7 +22,7 @@ const App = () => {
                     <Route path="/settings" element={<Settings/>}/>
                     <Route path="/not-registered" element={<NotRegistered/>}/>
                 </Routes>
-            </BrowserRouter>
+            </HashRouter>
         </AppProvider>
     );
 };

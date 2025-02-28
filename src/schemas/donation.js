@@ -34,7 +34,7 @@ export const createSchema = ({min, max}) => {
                     return val <= max;
 
                 }, {
-                    message: `Введите сумму не больше ${max} ₽`
+                    message: `Введите сумму до ${max} ₽`
                 }
             )
         ),
