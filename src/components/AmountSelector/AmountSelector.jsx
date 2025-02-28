@@ -20,8 +20,12 @@ const AmountSelector = ({register,min, max, badges, defaultBadge, setValue, erro
         if (defaultBadge) {
             setValue("amount", defaultBadge);
             const badgesWithDefault = [...badges, defaultBadge];
-            setAmounts(badgesWithDefault);
-            setSelectedIndex(badgesWithDefault.length - 1);
+            const sorted = badgesWithDefault.sort(function(a, b) {
+                return a - b;
+            })
+            setAmounts(sorted);
+            const defaultIndex = sorted.indexOf(defaultBadge);
+            setSelectedIndex(defaultIndex);
         }
     }, []);
 
