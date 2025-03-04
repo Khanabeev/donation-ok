@@ -48,16 +48,6 @@ export const AppProvider = ({children}) => {
                 }
             }
 
-            try {
-                await bridge.send('VKWebAppUpdateConfig', {keys: ['appearance']})
-                    .then(config => {
-                        setColorTheme(config?.appearance ?? 'light');
-                    })
-                    .catch(err => console.error(err))
-            } catch (error) {
-                console.error(error);
-            }
-
             // Все проверки завершены => убираем лоадер
             setIsLoading(false);
         }

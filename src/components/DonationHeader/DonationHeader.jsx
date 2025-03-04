@@ -4,7 +4,7 @@ const DonationHeader = ({settings}) => {
     return (
         <div className="flex flex-col gap-4">
             <div className="flex gap-4 items-center">
-                <div className="h-16 w-16" style={{
+                <div className="h-16 w-16 min-w-16 sm:min-w-fit sm:h-16 sm:w-16" style={{
                     backgroundImage: `url("${settings.generalInfo.fundLogo}")`,
                     backgroundSize: "cover"
                 }}>

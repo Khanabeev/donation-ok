@@ -10,7 +10,7 @@ const HeaderPanel = ({children, colors = {}}) => {
             backgroundColor: colors.primary,
             color: colors.textColor,
         }}>
-            <div className={styles.header}>
+            <div className="flex flex-col gap-4 mx-12">
                 {children}
             </div>
         </div>

@@ -74,9 +74,9 @@ const AmountSelector = ({register,min, max, badges, defaultBadge, setValue, erro
     return (
         <div className="flex flex-wrap gap-[0.8em]">
             {amounts.map((amount, index) => (
-                <div key={index} className={cn("basis-0 grow min-w-[100px]", {
-                    "min-w-[130px]": amounts.length > 3,
-                    "min-w-[110px]": amounts.length > 4,
+                <div key={index} className={cn("basis-0 grow min-w-[30px] md:min-w-[100px]", {
+                    "sm:min-w-[130px]": amounts.length > 3,
+                    "sm:min-w-[100px]": amounts.length > 4,
                     })}>
                     <label
                         style={{
