@@ -3,7 +3,6 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import './reset-slider-mobile.css';
 import styles from './Mobile.module.css';
-import bridge from "@vkontakte/vk-bridge";
 import {FiPlus} from "react-icons/fi";
 
 const InstallMobile = () => {
@@ -82,16 +81,6 @@ const InstallMobile = () => {
                         <div className={`w-full ${styles.install}`}>
                             <button
                                 className={`${styles.button} flex items-center`}
-                                onClick={() => {
-                                    bridge
-                                        .send('VKWebAppAddToCommunity')
-                                        .then((response) => {
-                                            console.log(response);
-                                        })
-                                        .catch((error) => {
-                                            console.log(error);
-                                        });
-                                }}
                             >
                                 <FiPlus className={styles.icon} />
                                 <span>Установить</span>

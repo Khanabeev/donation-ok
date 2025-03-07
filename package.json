@@ -5,7 +5,6 @@
   "type": "module",
   "scripts": {
     "predeploy": "npm run build",
-    "deploy": "vk-miniapps-deploy",
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
@@ -13,8 +12,6 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
-    "@vkontakte/vk-bridge": "^2.15.4",
-    "@vkontakte/vk-miniapps-deploy": "^0.1.9",
     "axios": "^1.7.9",
     "classnames": "^2.5.1",
     "color-parse": "^2.0.2",

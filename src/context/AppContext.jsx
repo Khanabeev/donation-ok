@@ -1,6 +1,5 @@
 import {createContext, useState, useEffect} from "react";
 import {fetchIdentity} from "@/api/backend.js";
-import bridge from "@vkontakte/vk-bridge";
 
 export const AppContext = createContext(null);
 
@@ -14,16 +13,21 @@ export const AppProvider = ({children}) => {
     const [colorTheme, setColorTheme] = useState(null);
 
     useEffect(() => {
-        async function init() {
+        const init = async () => {
+            console.log("FAPI инициализирован");
             // Считываем параметры
-            const params = new URLSearchParams(window.location.search);
-            const groupRole = params.get("vk_viewer_group_role");
-            const gid = params.get("vk_group_id");
-            const uid = params.get("vk_user_id");
+            const params = window.FAPI.Util.getRequestParameters();
+            const groupRole = params.viewer_type;
+            const gid = params.group_id;
+            const uid = params.logged_user_id;
+            const userName = params.user_name;
+
+            console.log(params.custom_args)
 
             setGroupId(gid);
             setUserId(uid);
-            setIsAdminOfGroup(groupRole === "admin");
+            setIsAdminOfGroup(groupRole === "ADMIN");
+            setUserName(userName);
 
             // Асинхронные проверки
             try {
@@ -37,23 +41,12 @@ export const AppProvider = ({children}) => {
                 setIsGroupRegistered(false);
             }
 
-            // Получаем информацию о пользователе (если есть uid)
-            if (uid) {
-                try {
-                    const res = await bridge.send('VKWebAppGetUserInfo', { user_id: uid });
-                    setUserName(res.first_name + " " + res.last_name);
-                    // eslint-disable-next-line no-unused-vars
-                } catch (error) {
-                    setUserName(null);
-                }
-            }
-
             // Все проверки завершены => убираем лоадер
             setIsLoading(false);
         }
 
         init();
-    }, []);
+    }, [])
 
     const value = {
         isAdminOfGroup,

@@ -4,7 +4,6 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import './reset-slider-desktop.css'
 import styles from './Desktop.module.css';
-import bridge from "@vkontakte/vk-bridge";
 import {FaPlus} from "react-icons/fa";
 
 const InstallDesktop = () => {
@@ -91,16 +90,6 @@ const InstallDesktop = () => {
                             {/* Заменяем Button на обычную кнопку */}
                             <button
                                 className={`${styles.button} flex items-center`}
-                                onClick={() => {
-                                    bridge
-                                        .send("VKWebAppAddToCommunity")
-                                        .then((response) => {
-                                            console.log(response);
-                                        })
-                                        .catch((error) => {
-                                            console.log(error);
-                                        });
-                                }}
                             >
                                 <FaPlus className={styles.icon} />
                                 <span>Установить</span>

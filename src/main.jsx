@@ -1,14 +1,17 @@
 import { createRoot } from 'react-dom/client'
 import {StrictMode} from 'react'
 import App from './App.jsx'
+import {BrowserRouter} from "react-router";
 import "./index.css";
-import bridge from '@vkontakte/vk-bridge';
-
-bridge.send("VKWebAppInit")
+import {AppProvider} from "@/context/AppContext.jsx";
 
 const root = createRoot(document.getElementById('root'));
 root.render(
     <StrictMode>
-        <App />
+        <AppProvider>
+            <BrowserRouter>
+                <App />
+            </BrowserRouter>
+        </AppProvider>
     </StrictMode>
 );
