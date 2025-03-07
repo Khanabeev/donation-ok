@@ -22,7 +22,7 @@
 /**
  * @typedef {Object} FundForm
  * @property {Object} data - Данные формы.
- * @property {string} data.urlOffer - Условия офферты.
+ * @property {string} data.urlOffer - Условия оферты.
  * @property {string} data.urlPersonalData - Условия обработки персональных данных.
  * @property {FieldSettings} data.fields - Поля формы.
  * @property {Object} clientData - Данные клиента.

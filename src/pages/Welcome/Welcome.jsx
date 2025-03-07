@@ -1,11 +1,13 @@
-import React from 'react';
+import React, {useContext, useEffect} from 'react';
 import styles from "./Welcome.module.css";
 import {BiDonateHeart} from "react-icons/bi";
 import {FiHeart, FiSettings, FiLink, FiCheckSquare, FiFileText} from "react-icons/fi";
 import Button from "@/components/Button/Button.jsx";
-import {useNavigate} from "react-router";
+import {useNavigate, useParams} from "react-router";
 import HeaderPanel from "@/components/HeaderPanel/HeaderPanel.jsx";
 import ContentPanel from "@/components/ContentPanel/ContentPanel.jsx";
+import {AppContext} from "@/context/AppContext.jsx";
+import Loader from "@/components/Loader/Loader.jsx";
 
 
 const Welcome = () => {

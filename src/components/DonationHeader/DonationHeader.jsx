@@ -4,12 +4,10 @@ const DonationHeader = ({settings}) => {
     return (
         <div className="flex flex-col gap-4">
             <div className="flex gap-4 items-center">
-                <div className="max-w-24 h-full relative top-0">
-                    <img
-                        src={settings.generalInfo.fundLogo}
-                        alt={settings.generalInfo.fundName}
-                        className="rounded-full object-cover w-full h-full align-middle"
-                    />
+                <div className="h-16 w-16 min-w-16 sm:min-w-fit sm:h-16 sm:w-16" style={{
+                    backgroundImage: `url("${settings.generalInfo.fundLogo}")`,
+                    backgroundSize: "cover"
+                }}>
                 </div>
 
                 <div className="flex flex-col gap-1">

@@ -16,7 +16,7 @@ const AcceptTerms = ({register, setValue, settings, colors}) => {
                 name="is_terms_accepted"
                 className="accent-base-300"
             />
-            <div>Принимаю <a href={terms.urlOffer} target="_blank" className="underline" style={{color:colors.primary}}>офферту</a> сервиса и <a href={terms.urlPersonalData} target="_blank" className="underline" style={{color:colors.primary}}>политику</a> персональных данных</div>
+            <div>Принимаю <a href={terms.urlOffer} target="_blank" className="underline" style={{color:colors.primary}}>оферту</a> сервиса и <a href={terms.urlPersonalData} target="_blank" className="underline" style={{color:colors.primary}}>политику</a> персональных данных</div>
         </div>
     );
 };
