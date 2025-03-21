@@ -1,5 +1,6 @@
 import {createContext, useState, useEffect} from "react";
 import {fetchIdentity} from "@/api/backend.js";
+import {initFAPI} from "@/core/okSdk.js";
 
 export const AppContext = createContext(null);
 
@@ -21,13 +22,15 @@ export const AppProvider = ({children}) => {
             const gid = params.group_id;
             const uid = params.logged_user_id;
             const userName = params.user_name;
+            const theme = params.theme;
 
-            console.log(params.custom_args)
+            console.log(params)
 
             setGroupId(gid);
             setUserId(uid);
             setIsAdminOfGroup(groupRole === "ADMIN");
             setUserName(userName);
+            setColorTheme(theme);
 
             // Асинхронные проверки
             try {
@@ -45,7 +48,9 @@ export const AppProvider = ({children}) => {
             setIsLoading(false);
         }
 
-        init();
+        initFAPI(init(), () => {
+            console.log('error')
+        })
     }, [])
 
     const value = {

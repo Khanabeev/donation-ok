@@ -1,14 +1,17 @@
-import { useRef, useState } from 'react';
+import {useContext, useEffect, useRef, useState} from 'react';
 import Slider from "react-slick";
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import './reset-slider-desktop.css'
 import styles from './Desktop.module.css';
 import {FaPlus} from "react-icons/fa";
+import {AppContext} from "@/context/AppContext.jsx";
+import cn from "classnames";
 
 const InstallDesktop = () => {
     let slider = useRef(null);
     const [currentSlide, updateCurrentSlide] = useState(0);
+    const [isDarkMode, setIsDarkMode] = useState(false);
 
     const settings = {
         dots: true,
@@ -19,6 +22,14 @@ const InstallDesktop = () => {
         slidesToScroll: 1,
         beforeChange: (oldIndex, newIndex) => updateCurrentSlide(newIndex),
     };
+
+    const {
+        colorTheme
+    } = useContext(AppContext);
+
+    useEffect(() => {
+        setIsDarkMode(colorTheme === 'dark');
+    }, [colorTheme]);
 
     const slides = [
         'Удобный способ приема пожертвований и подписки на регулярную помощь для некоммерческих организаций',
@@ -43,7 +54,7 @@ const InstallDesktop = () => {
                         {images.map((image, index) => (
                             <div key={index}>
                                 <div className={styles.sliderImage}>
-                                    <img src={image} alt="" />
+                                    <img src={image} alt=""/>
                                 </div>
                             </div>
                         ))}
@@ -53,13 +64,17 @@ const InstallDesktop = () => {
                 <div className="w-1/2 mr-8">
                     <div className={`flex gap-1 ${styles.head}`}>
                         <div className={`w-1/4 ${styles.logo}`}>
-                            <img src="/img/logo.png" alt="app" />
+                            <img src="/img/logo.png" alt="app"/>
                         </div>
                         <div className="w-3/4">
                             <div className="flex flex-wrap gap-4">
                                 <div className={`w-full ${styles.left}`}>
-                                    <p className={styles.p}>приложение</p>
-                                    <p className={`${styles.p} ${styles.appName} font-bold`}>
+                                    <p className={cn(styles.p, {
+                                        [styles.dark]: isDarkMode
+                                    })}>приложение</p>
+                                    <p className={cn(styles.p, styles.appName, 'font-bold', {
+                                        [styles.dark]: isDarkMode
+                                    })}>
                                         «Пожертвование»
                                     </p>
                                 </div>
@@ -70,9 +85,10 @@ const InstallDesktop = () => {
                     {slides.map((slide, index) => (
                         <div
                             key={index}
-                            className={`${styles.sliderDescription} ${
-                                currentSlide === index ? styles.active : ''
-                            }`}
+                            className={cn(styles.sliderDescription, {
+                                [styles.active]: currentSlide === index,
+                                [styles.dark]: isDarkMode,
+                            })}
                             onClick={() => {
                                 if (slider) {
                                     slider.slickGoTo(index);
@@ -91,7 +107,7 @@ const InstallDesktop = () => {
                             <button
                                 className={`${styles.button} flex items-center`}
                             >
-                                <FaPlus className={styles.icon} />
+                                <FaPlus className={styles.icon}/>
                                 <span>Установить</span>
                             </button>
                         </div>
