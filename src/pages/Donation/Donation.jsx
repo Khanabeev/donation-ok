@@ -27,12 +27,12 @@ const Donation = () => {
         setIsLoading,
         groupId,
         userName,
-        userId
+        userId,
+        targetId,
     } = useContext(AppContext);
 
 
     const [paymentMethods, setPaymentMethods] = useState(["card"]);
-    const [targetId, setTargetId] = useState(null);
     const [settings, setSettings] = useState(null);
 
     // Вычисляем цвета и другие производные данные только после загрузки settings
@@ -87,21 +87,6 @@ const Donation = () => {
             payment_method: "card",
         }
     });
-
-    // Обработка параметров URL
-    // useEffect(() => {
-    //     if (customArgs) {
-    //         const params = new URLSearchParams(customArgs);
-    //
-    //         if (params.has("target")) {
-    //             setTargetId(params.get("target"));
-    //         }
-    //
-    //         if (params.has("status")) {
-    //             setIsSuccess(params.get("status") === 'success');
-    //         }
-    //     }
-    // }, [customArgs]);
 
     // Загрузка настроек
     useEffect(() => {

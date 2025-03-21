@@ -12,6 +12,7 @@ export const AppProvider = ({children}) => {
     const [isLoading, setIsLoading] = useState(true);
     const [userName, setUserName] = useState(null);
     const [colorTheme, setColorTheme] = useState(null);
+    const [targetId, setTargetId] = useState(null);
 
     useEffect(() => {
         const init = async () => {
@@ -23,14 +24,19 @@ export const AppProvider = ({children}) => {
             const uid = params.logged_user_id;
             const userName = params.user_name;
             const theme = params.theme;
-
-            console.log(params)
+            const args = params.custom_args ?? ''
 
             setGroupId(gid);
             setUserId(uid);
             setIsAdminOfGroup(groupRole === "ADMIN");
             setUserName(userName);
             setColorTheme(theme);
+
+            if (args) {
+                const searchParams = new URLSearchParams(args);
+                const targetId = searchParams.get("target_id");
+                setTargetId(targetId);
+            }
 
             // Асинхронные проверки
             try {
@@ -62,6 +68,7 @@ export const AppProvider = ({children}) => {
         setIsLoading,
         userName,
         colorTheme,
+        targetId,
     };
 
     return (
