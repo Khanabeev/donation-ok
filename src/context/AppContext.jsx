@@ -42,7 +42,7 @@ export const AppProvider = ({children}) => {
             try {
                 // Если есть gid, проверяем регистрацию группы
                 if (gid) {
-                    await fetchIdentity(gid);
+                    await fetchIdentity(gid, targetId);
                     setIsGroupRegistered(true);
                 }
                 // eslint-disable-next-line no-unused-vars

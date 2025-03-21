@@ -95,7 +95,7 @@ const Donation = () => {
 
             setIsLoading(true);
             try {
-                const data = await fetchIdentity(groupId);
+                const data = await fetchIdentity(groupId, targetId);
                 const processedData = extractDonationSettings(data);
                 setSettings(processedData);
 

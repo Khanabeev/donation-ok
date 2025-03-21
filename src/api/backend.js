@@ -29,7 +29,7 @@ export const fetchIdentity = async (groupId, targetId) => {
         const response = await http.get(`/fapi/vk/info`, {
             params: {
                 gid: groupId,
-                targetId: targetId || null,
+                targetId: targetId,
             },
         });
         return response.data; // Возвращаем данные ответа
